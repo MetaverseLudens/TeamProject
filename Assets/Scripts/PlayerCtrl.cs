@@ -1,0 +1,137 @@
+using Photon.Pun;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem.XR;
+using UnityEngine.XR;
+
+public class PlayerCtrl : MonoBehaviourPun
+{
+    [SerializeField]
+    private TrackedPoseDriver[] _handTrackings;
+    [SerializeField]
+    private Transform _viewCamTRs;      // XROrigin에 부착된 뷰카메라 HMD (Main Camera)
+    [SerializeField]
+    private Animator _anim;  //플레이어 캐릭터의 애니메이터
+    [SerializeField]
+    private Rigidbody _rb;
+
+    private InputDevice _leftHand;
+    private InputDevice _rightHand;
+
+    [SerializeField]
+    private float _moveSpeed = 1.5f;  //이동 속도
+    [SerializeField]
+    private float _rotSpeed = 90f; // 초당 90도 회전
+
+    private void Start()
+    {
+        if (photonView.IsMine == false)
+        {
+            foreach (var item in _handTrackings)
+            {
+                item.enabled = false;
+            }
+            _viewCamTRs.gameObject.SetActive(false);
+            return;
+        }
+
+        InitializeLeftHand();
+    }
+
+    private void Update()
+    {
+        if (photonView.IsMine == false)
+            return;
+
+        if (!_leftHand.isValid)
+        {
+            InitializeLeftHand();
+            return;
+        }
+
+        if (_leftHand.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 input))
+        {
+            MovePlayer(input);
+        }
+
+
+        //회전
+        if (!_leftHand.isValid || !_rightHand.isValid) { Start(); return; }
+
+        // 왼손 트리거
+        if (_leftHand.TryGetFeatureValue(CommonUsages.triggerButton, out bool leftPressed) && leftPressed)
+            Rotate(-_rotSpeed * Time.deltaTime);
+
+        // 오른손 트리거
+        if (_rightHand.TryGetFeatureValue(CommonUsages.triggerButton, out bool rightPressed) && rightPressed)
+            Rotate(+_rotSpeed * Time.deltaTime);
+
+        // XR 디바이스에서 현재 헤드셋의 위치/회전 가져오기
+        Vector3 headPosition = InputTracking.GetLocalPosition(XRNode.Head);
+        Quaternion headRotation = InputTracking.GetLocalRotation(XRNode.Head);
+
+        // 카메라 위치/회전 갱신
+        //_viewCamTRs.localPosition = headPosition;
+        _viewCamTRs.localRotation = headRotation;
+    }
+
+    private void InitializeLeftHand()
+    {
+        // 왼손, 오른손 디바이스 초기화
+        var leftDevices = new List<InputDevice>();
+        InputDevices.GetDevicesAtXRNode(XRNode.LeftHand, leftDevices);
+        if (leftDevices.Count > 0) _leftHand = leftDevices[0];
+
+        var rightDevices = new List<InputDevice>();
+        InputDevices.GetDevicesAtXRNode(XRNode.RightHand, rightDevices);
+        if (rightDevices.Count > 0) _rightHand = rightDevices[0];
+
+        if (leftDevices.Count > 0)
+        {
+            _leftHand = leftDevices[0];
+            Debug.Log("왼손 컨트롤러 연결됨: " + _leftHand.name);
+        }
+        else
+        {
+            Debug.LogWarning("왼손 컨트롤러를 찾을 수 없습니다.");
+        }
+
+        if (rightDevices.Count > 0)
+        {
+            _rightHand = rightDevices[0];
+            Debug.Log("오른손 컨트롤러 연결됨: " + _rightHand.name);
+        }
+        else
+        {
+            Debug.LogWarning("오른손 컨트롤러를 찾을 수 없습니다.");
+        }
+    }
+
+    private void MovePlayer(Vector2 input)
+    {
+        // HMD (Main Camera)의 전방 방향 기준으로 이동 (수평만 적용)
+        Vector3 forward = _viewCamTRs.forward;
+        Vector3 right = _viewCamTRs.right;
+
+        // 수평 이동만 반영 (Y 제거)
+        forward.y = 0;
+        right.y = 0;
+        forward.Normalize();
+        right.Normalize();
+
+        Vector3 moveDirection = forward * input.y + right * input.x;
+        //_rb.MovePosition(transform.position + moveDirection * _moveSpeed * Time.deltaTime);
+        _rb.position += moveDirection * _moveSpeed * Time.deltaTime;
+
+        _anim.SetFloat("MoveX", moveDirection.x);
+        _anim.SetFloat("MoveZ", moveDirection.z);
+        Debug.Log($"X: {moveDirection.x}\nZ: {moveDirection.z}");
+    }
+
+    private void Rotate(float angle)
+    {
+        transform.Rotate(0, angle, 0);
+        Debug.Log("XR Origin 회전: " + angle + "도");
+    }
+
+}
