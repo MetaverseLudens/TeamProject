@@ -6,5 +6,7 @@ public static class MyString
 {
     public const string SCENE_LOBBY = "Lobby";
     public const string SCENE_ROOM = "Room";
-    public const string SCENE_GAME = "Play";
+    public const string SCENE_GAME = "Play-kdi";
+
+    public const string TAG_PLAYER = "Player";
 }
