@@ -42,6 +42,10 @@ MonoBehaviour:
   - RPC_ChangeState
   - RPC_SyncState
   - RPC_Shoot
+  - HaveOrNoneCoreItem
+  - LoseAllCoreItem
+  - Off
+  - SetCoreSlot
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
