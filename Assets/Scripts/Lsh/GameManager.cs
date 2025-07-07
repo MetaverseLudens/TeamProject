@@ -6,24 +6,28 @@ using UnityEngine;
 public class GameManager : MonoBehaviourPun
 {
     [SerializeField]
-    private Queue<string> _playerPrefabNameQueue = new Queue<string>();
+    private string[] _playerPrefabName;
+
     [SerializeField]
-    private Queue<Vector3> _playerSpawnQueue = new Queue<Vector3>();
+    private Vector3[] _spawnVec;
 
     private void Start()
     {
-        _playerPrefabNameQueue.Enqueue(MyString.PLAYER_PREFAB_0);
-        _playerPrefabNameQueue.Enqueue(MyString.PLAYER_PREFAB_1);
-        _playerPrefabNameQueue.Enqueue(MyString.PLAYER_PREFAB_2);
-        _playerPrefabNameQueue.Enqueue(MyString.PLAYER_PREFAB_3);
-        _playerSpawnQueue.Enqueue(new Vector3(5, 0, 0));
-        _playerSpawnQueue.Enqueue(new Vector3(-5, 0, 0));
-        _playerSpawnQueue.Enqueue(new Vector3(0, 0, 5));
-        _playerSpawnQueue.Enqueue(new Vector3(0, 0, -5));
+        _playerPrefabName = new string[4];
+        _playerPrefabName[0] = MyString.PLAYER_PREFAB_0;
+        _playerPrefabName[1] = MyString.PLAYER_PREFAB_1;
+        _playerPrefabName[2] = MyString.PLAYER_PREFAB_2;
+        _playerPrefabName[3] = MyString.PLAYER_PREFAB_3;
+        _spawnVec = new Vector3[4];
+        _spawnVec[0] = new Vector3(5, 0, 0);
+        _spawnVec[1] = new Vector3(-5, 0, 0);
+        _spawnVec[2] = new Vector3(0, 0, -5);
+        _spawnVec[3] = new Vector3(0, 0, 5);
     }
 
     public void OnJoinedRoom()
     {
-        PhotonNetwork.Instantiate(_playerPrefabNameQueue.Dequeue(), _playerSpawnQueue.Dequeue(), Quaternion.identity);
+        int ran = Random.Range(0, 4);
+        PhotonNetwork.Instantiate(_playerPrefabName[ran], _spawnVec[ran], Quaternion.identity);
     }
 }
