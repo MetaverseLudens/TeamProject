@@ -6236,7 +6236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee3f3729187770a46a9c6a8ac10bdcbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  korField: {fileID: 1854811882376781644}
+  korField: {fileID: 0}
   wndKeyBoard: {fileID: 718599683128862841}
   LangKey:
   - {fileID: 222270003929157636}
@@ -9875,7 +9875,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 2.84}
+  m_AnchoredPosition: {x: 0, y: 2.8399963}
   m_SizeDelta: {x: 596, y: 460}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &267859053265824887
@@ -9923,7 +9923,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &7041607067590058885
 MonoBehaviour:
   m_ObjectHideFlags: 0

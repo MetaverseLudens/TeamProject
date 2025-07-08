@@ -9,7 +9,7 @@ public class PhotonObjectPool : MonoBehaviour, IPunPrefabPool
     {
         public string prefabName;
         public GameObject prefab;
-        public int preloadCount = 5; //미리 풀 오브젝트에 꺼내놓을
+        public int preloadCount = 5; //미리 풀 오브젝트에 꺼내놓을 개수
     }
 
     public List<PoolInfo> poolList;
@@ -45,7 +45,7 @@ public class PhotonObjectPool : MonoBehaviour, IPunPrefabPool
         }
 
         // 만약 없으면 새로 생성
-        GameObject newObj = GameObject.Instantiate(Resources.Load<GameObject>(prefabId), position, rotation);
+        GameObject newObj = Instantiate(Resources.Load<GameObject>(prefabId), position, rotation);
         newObj.name = prefabId;
         return newObj;
     }
@@ -59,7 +59,7 @@ public class PhotonObjectPool : MonoBehaviour, IPunPrefabPool
         }
         else
         {
-            GameObject.Destroy(go); // 혹시 풀에 등록 안된 오브젝트일 경우
+            UnityEngine.Object.Destroy(go);
         }
     }
 }

@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
@@ -28,12 +29,12 @@ public class PlayerCtrl : MonoBehaviourPun
     [SerializeField]
     private bool _isGrounded = true;
     [SerializeField]
-    public bool _isGroggyState {  get; private set; }
+    public bool _isGroggyState { get; private set; }
     [SerializeField]
     private LayerMask _groundMask;
     [SerializeField]
     private Transform _detectGroundTrs;
-    
+
     private void Start()
     {
         if (photonView.IsMine == false)
@@ -67,7 +68,7 @@ public class PlayerCtrl : MonoBehaviourPun
 
 
         //그로기상태가 아닐때 움직임가능
-        if(_isGroggyState == false)
+        if (_isGroggyState == false)
         {
             //회전
             if (!_leftHand.isValid || !_rightHand.isValid) { Start(); return; }
@@ -168,4 +169,61 @@ public class PlayerCtrl : MonoBehaviourPun
         Debug.Log("XR Origin 회전: " + angle + "도");
     }
 
+
+    [PunRPC]
+    public void SpeedEffect(float speedOffset, float duration)
+    {
+        StartCoroutine(ApplySpeedRoutine(speedOffset, duration));
+    }
+
+    private IEnumerator ApplySpeedRoutine(float offset, float duration)
+    {
+        _moveSpeed += offset;
+        yield return new WaitForSeconds(duration);
+        _moveSpeed -= offset;
+    }
+
+    [PunRPC]
+    public void PowerEffect(float speedOffset, float duration)
+    {
+        StartCoroutine(ApplyPowerRoutine(speedOffset, duration));
+    }
+
+    private IEnumerator ApplyPowerRoutine(float offset, float duration)
+    {
+        //_moveSpeed += offset;
+        yield return new WaitForSeconds(duration);
+        //_moveSpeed -= offset;
+    }
+
+    [PunRPC]
+    public void ScaleEffect(float speedOffset, float duration)
+    {
+        StartCoroutine(ApplyScaleRoutine(speedOffset, duration));
+    }
+
+    private IEnumerator ApplyScaleRoutine(float offset, float duration)
+    {
+        Vector3 originalScale = transform.localScale;
+        Vector3 targetScale = originalScale + new Vector3(offset, offset, offset);
+        float elapsed = 0f;
+        float halfDuration = 2f / 2f; // 앞에 2f 값을 바꾸면 커지는 와중의 시간
+
+        while (elapsed < halfDuration)
+        {
+            transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsed / halfDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = targetScale;
+        yield return new WaitForSeconds(duration - halfDuration * 2f);
+        elapsed = 0f;
+        while (elapsed < halfDuration)
+        {
+            transform.localScale = Vector3.Lerp(targetScale, originalScale, elapsed / halfDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = originalScale;
+    }
 }
