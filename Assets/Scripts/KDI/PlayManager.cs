@@ -59,7 +59,7 @@ public class PlayManager : MonoBehaviour
             return;
         }
 
-        string prefabName = $"Player{charId}";
+        string prefabName = $"Player_{charId}";
         PhotonNetwork.Instantiate(prefabName, spawnPoints[seatIndex].position, spawnPoints[seatIndex].rotation);
     }
 

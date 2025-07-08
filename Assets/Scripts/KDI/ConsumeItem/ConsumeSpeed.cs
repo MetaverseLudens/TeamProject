@@ -19,7 +19,7 @@ public class ConsumeSpeed : ConsumeItemBase
             float multiplier = Random.value < 0.5f ? speedBuff : speedDebuff;
             //controller.GetComponent<PhotonView>().RPC("ApplySpeedEffect", RpcTarget.All, multiplier, effectDuration);
         }
-
+        Debug.Log("내가 아이템 먹음");
         ConsumeItemSpawner.Instance.DecreaseItemCount();
 
         PhotonNetwork.Destroy(gameObject);
