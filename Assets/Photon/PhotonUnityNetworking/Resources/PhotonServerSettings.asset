@@ -46,6 +46,9 @@ MonoBehaviour:
   - LoseAllCoreItem
   - Off
   - SetCoreSlot
+  - PowerEffect
+  - ScaleEffect
+  - SpeedEffect
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

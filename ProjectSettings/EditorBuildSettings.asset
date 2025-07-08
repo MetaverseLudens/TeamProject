@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Room.unity
     guid: 87f7d0427ef194644865866e89767cd0
   - enabled: 1
+    path: Assets/Scenes/Play-kdi2.unity
+    guid: b300775c7cdccc64e80009f568096065
+  - enabled: 1
     path: Assets/Scenes/Play-kdi.unity
     guid: f2a1f1d621f733d48b567345534bb28d
   - enabled: 0

@@ -6,8 +6,8 @@ public class ConsumeSpeed : ConsumeItemBase
 {
     public float effectDuration = 5f;
     public float originSpeed = 1.5f;
-    public float speedBuff = 3f;
-    public float speedDebuff = 0.7f;
+    public float speedBuff = 0.5f;
+    public float speedDebuff = -0.5f;
 
     public override void OnConsumed(GameObject player)
     {
@@ -16,8 +16,8 @@ public class ConsumeSpeed : ConsumeItemBase
         var controller = player.GetComponent<PlayerCtrl>();
         if (controller != null)
         {
-            float multiplier = Random.value < 0.5f ? speedBuff : speedDebuff;
-            //controller.GetComponent<PhotonView>().RPC("ApplySpeedEffect", RpcTarget.All, multiplier, effectDuration);
+            float effect = Random.value < 0.5f ? speedBuff : speedDebuff;
+            controller.GetComponent<PhotonView>().RPC("SpeedEffect", RpcTarget.All, effect, effectDuration);
         }
         Debug.Log("내가 아이템 먹음");
         ConsumeItemSpawner.Instance.DecreaseItemCount();
