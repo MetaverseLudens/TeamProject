@@ -36,19 +36,24 @@ public class PhotonObjectPool : MonoBehaviour, IPunPrefabPool
 
     public GameObject Instantiate(string prefabId, Vector3 position, Quaternion rotation)
     {
+        GameObject go;
+
         if (poolDict.TryGetValue(prefabId, out var queue) && queue.Count > 0)
         {
-            GameObject go = queue.Dequeue();
-            go.transform.SetPositionAndRotation(position, rotation);
-            go.SetActive(true);
-            return go;
+            go = queue.Dequeue();
+        }
+        else
+        {
+            go = Instantiate(Resources.Load<GameObject>(prefabId));
+            go.name = prefabId;
         }
 
-        // 만약 없으면 새로 생성
-        GameObject newObj = Instantiate(Resources.Load<GameObject>(prefabId), position, rotation);
-        newObj.name = prefabId;
-        return newObj;
+        go.transform.SetPositionAndRotation(position, rotation);
+
+        // Photon이 나중에 SetActive(true) 호출하므로 여기선 비활성 상태로 반환해야 함
+        return go;
     }
+
 
     public void Destroy(GameObject go)
     {
