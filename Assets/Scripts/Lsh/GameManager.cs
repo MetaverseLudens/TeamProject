@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviourPun
     public void OnJoinedRoom()
     {
         int ran = Random.Range(0, 4);
-        PhotonNetwork.Instantiate(_playerPrefabName[ran], _spawnVec[ran], Quaternion.identity);
+        var a = PhotonNetwork.Instantiate(_playerPrefabName[ran], _spawnVec[ran], Quaternion.identity);
+        //PhotonNetwork.InstantiateRoomObject("Item - Rock", _spawnVec[ran] + a.transform.forward * 2, Quaternion.identity);
     }
 }

@@ -46,6 +46,24 @@ MonoBehaviour:
   - LoseAllCoreItem
   - Off
   - SetCoreSlot
+  - GrabItem
+  - CRT_UpdatePeakVelocity
+  - GetItem
+  - GetVelocity
+  - StartGroggyState
+  - StopGroggyState
+  - UpdatePeakVellocity
+  - DelayThrowItemColEnable
+  - UpdateThrowStartPoint
+  - RPC_GrabItem
+  - RPC_ThrowItem
+  - RPC_ApplyThrowForce
+  - RPC_GetItem
+  - Test
+  - GrabOthers
+  - ThrowingOthers
+  - RPC_StartGroggyState
+  - RPC_StopGroggyState
   - PowerEffect
   - ScaleEffect
   - SpeedEffect

@@ -8,7 +8,7 @@ public class CoreItem : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other == null || photonView.IsMine == false)
+        if (!other.CompareTag(MyString.PLAYER_TAG) || photonView.IsMine == false)
             return;
 
         PhotonView targetView = other.GetComponent<PhotonView>();
