@@ -681,8 +681,8 @@ MonoBehaviour:
   _viewCamTRs: {fileID: 1359246735853436816}
   _anim: {fileID: 5645159302952293467}
   _rb: {fileID: 80783538766739164}
-  _moveSpeed: 1.5
-  _rotSpeed: 90
+  _moveSpeed: 3
+  _rotSpeed: 60
   _jumpPower: 50
   _isGrounded: 1
   _groundMask:

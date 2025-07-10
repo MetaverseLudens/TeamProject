@@ -273,7 +273,7 @@ Skybox:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100986073163940171}
   m_Enabled: 1
-  m_CustomSkybox: {fileID: 2100000, guid: 790154b7448977a42afaf602742a1f97, type: 2}
+  m_CustomSkybox: {fileID: 2100000, guid: 860a66ca4259b384f9ec01b687f71c3c, type: 2}
 --- !u!1 &134404216054509475
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,8 +681,8 @@ MonoBehaviour:
   _viewCamTRs: {fileID: 1359246735853436816}
   _anim: {fileID: 1176669755425495059}
   _rb: {fileID: 80783538766739164}
-  _moveSpeed: 1.5
-  _rotSpeed: 90
+  _moveSpeed: 3
+  _rotSpeed: 60
   _jumpPower: 50
   _isGrounded: 1
   _groundMask:
