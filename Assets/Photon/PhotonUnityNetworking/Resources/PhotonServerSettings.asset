@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonServerSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdRealtime: 3acd4495-13b8-4acb-9a02-6055bb18ce5e
+    AppIdRealtime: 020cb7b0-9ff6-4cc5-b815-495737c757f5
     AppIdFusion: 
     AppIdChat: 
     AppIdVoice: 
@@ -49,6 +49,8 @@ MonoBehaviour:
   - PowerEffect
   - ScaleEffect
   - SpeedEffect
+  - EscapeSequence
+  - FreezePlayer
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
