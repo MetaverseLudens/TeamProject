@@ -80,7 +80,7 @@ public class Item_Rock : MonoBehaviourPun, IGrabable
         WaitForSeconds resetIntervalTime = new WaitForSeconds(_peakVelocityUpdateIntervalTime);
         while (true)
         {
-            float curVelocity = _rb.velocity.magnitude;
+            float curVelocity = _rb.linearVelocity.magnitude;
             //Debug.Log("CurVelocity: " + curVelocity);
             if (curVelocity > _peakVelocity)
             {

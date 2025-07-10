@@ -692,7 +692,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _detectGroundTrs: {fileID: 6987294894916501731}
-  _timerText: {fileID: 5398203857354514947}
+  _timerText: {fileID: 0}
 --- !u!114 &5965097029257999367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -766,9 +766,10 @@ GameObject:
   - component: {fileID: 359899403639100897}
   - component: {fileID: 6357855314657381038}
   - component: {fileID: 5918360573569783480}
+  - component: {fileID: 2939516734713169265}
   m_Layer: 0
   m_Name: LeftHandTracking
-  m_TagString: Untagged
+  m_TagString: Hand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -873,6 +874,27 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!135 &2939516734713169265
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892557742445369601}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2310374884014810465
 GameObject:
   m_ObjectHideFlags: 0
@@ -1085,7 +1107,6 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5646071363093304588}
-  - {fileID: 3496008927233663714}
   m_Father: {fileID: 1493437501763941104}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1496,9 +1517,10 @@ GameObject:
   - component: {fileID: 6764759554396925875}
   - component: {fileID: 7865607529656644994}
   - component: {fileID: 910930171363318689}
+  - component: {fileID: 3562439355895853868}
   m_Layer: 0
   m_Name: RightHandTracking
-  m_TagString: Untagged
+  m_TagString: Hand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1603,6 +1625,27 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!135 &3562439355895853868
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7959752718781518860}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8494893103906702390
 GameObject:
   m_ObjectHideFlags: 0
