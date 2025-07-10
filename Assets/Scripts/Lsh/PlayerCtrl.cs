@@ -52,6 +52,7 @@ public class PlayerCtrl : MonoBehaviourPun
         }
         if (_timerText != null) PlayManager.Instance.RegisterTimerText(_timerText);
         InitializeLeftHand();
+
     }
 
     private void Update()
@@ -164,7 +165,7 @@ public class PlayerCtrl : MonoBehaviourPun
 
         _anim.SetFloat("MoveX", moveDirection.x);
         _anim.SetFloat("MoveZ", moveDirection.z);
-        Debug.Log($"X: {moveDirection.x}\nZ: {moveDirection.z}");
+        //Debug.Log($"X: {moveDirection.x}\nZ: {moveDirection.z}");
     }
 
     private void Rotate(float angle)
@@ -229,5 +230,16 @@ public class PlayerCtrl : MonoBehaviourPun
             yield return null;
         }
         transform.localScale = originalScale;
+    }
+    [PunRPC]
+    public void FreezePlayer()
+    {
+        if (!photonView.IsMine) return;
+
+        _rb.isKinematic = true;
+        _leftHand = new InputDevice();
+        _rightHand = new InputDevice();
+        _moveSpeed = 0f;
+        _rotSpeed = 0f;
     }
 }

@@ -2,22 +2,24 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayManager : MonoBehaviourPunCallbacks
 {
     public static PlayManager Instance;
-
     public Transform[] spawnPoints;
     public float gameDuration = 180f;
-    public GameObject cinematicCamera;
     public GameObject gameOverUI;
     public GameObject explosionEffect;
 
     private TMP_Text _myTimerText;
     private float startTime;
+
+    public Camera _rocketViewCam;
 
     void Awake()
     {
@@ -122,14 +124,28 @@ public class PlayManager : MonoBehaviourPunCallbacks
         PhotonNetwork.Instantiate(prefabName, spawnPoints[seatIndex].position, spawnPoints[seatIndex].rotation);
     }
 
-    public void EndGame()
+    [PunRPC]
+    public void EscapeSequence(string winnerName)
     {
-        StartCoroutine(ReturnToLobbyAfterDelay());
+        StartCoroutine(EscapeSequenceRoutine(winnerName));
     }
 
-    IEnumerator ReturnToLobbyAfterDelay()
+    private IEnumerator EscapeSequenceRoutine(string winnerName)
     {
+        // 1. 모든 플레이어 움직임 정지
+        //photonView.RPC("FreezePlayer", RpcTarget.All);
+
+        // 2. 공통 시네마틱 카메라 활성화
+        _rocketViewCam.gameObject.SetActive(true);
+        _rocketViewCam.depth = 50;
+
+        // 3. 로켓 이펙트 연출 기다리기 (예: 3초)
         yield return new WaitForSeconds(3f);
-        PhotonNetwork.LeaveRoom();
+
+        // 4. 게임 종료 UI 표시 + 우승자 이름
+        gameOverUI.SetActive(true);
+        TMP_Text resultText = gameOverUI.GetComponentInChildren<TMP_Text>();
+        if (resultText != null)
+            resultText.text = $"{winnerName} 님이 우주 탈출에 성공했습니다!";
     }
 }
