@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Bullet
   - Collide
+  - Rock
   layers:
   - Default
   - TransparentFX

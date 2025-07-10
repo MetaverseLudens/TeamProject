@@ -19,7 +19,7 @@ public class PlayerCtrl : MonoBehaviourPun
     public InputDevice _rightHand;
 
     [SerializeField]
-    private float _moveSpeed = 1.5f;  //이동 속도
+    private float _moveSpeed = 5f;  //이동 속도
     [SerializeField]
     private float _rotSpeed = 90f; // 초당 90도 회전
 
@@ -28,12 +28,12 @@ public class PlayerCtrl : MonoBehaviourPun
     [SerializeField]
     private bool _isGrounded = true;
     [SerializeField]
-    public bool _isGroggyState {  get; private set; }
+    public bool _isGroggyState = false;
     [SerializeField]
     private LayerMask _groundMask;
     [SerializeField]
     private Transform _detectGroundTrs;
-    
+
     private void Start()
     {
         if (photonView.IsMine == false)
@@ -90,7 +90,6 @@ public class PlayerCtrl : MonoBehaviourPun
             if (_leftHand.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out bool leftThumbstickClick) && leftThumbstickClick && _isGrounded)
             {
                 _rb.AddForce(Vector3.up * _jumpPower);
-                Debug.Log("Getting Power...");
             }
         }
 
@@ -159,13 +158,11 @@ public class PlayerCtrl : MonoBehaviourPun
 
         _anim.SetFloat("MoveX", moveDirection.x);
         _anim.SetFloat("MoveZ", moveDirection.z);
-        Debug.Log($"X: {moveDirection.x}\nZ: {moveDirection.z}");
     }
 
     private void Rotate(float angle)
     {
         transform.Rotate(0, angle, 0);
-        Debug.Log("XR Origin 회전: " + angle + "도");
     }
 
 }
