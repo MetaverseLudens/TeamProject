@@ -1,6 +1,7 @@
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.XR;
@@ -35,6 +36,9 @@ public class PlayerCtrl : MonoBehaviourPun
     [SerializeField]
     private Transform _detectGroundTrs;
 
+    [SerializeField]
+    TMP_Text _timerText;
+
     private void Start()
     {
         if (photonView.IsMine == false)
@@ -46,7 +50,7 @@ public class PlayerCtrl : MonoBehaviourPun
             _viewCamTRs.gameObject.SetActive(false);
             return;
         }
-
+        if (_timerText != null) PlayManager.Instance.RegisterTimerText(_timerText);
         InitializeLeftHand();
     }
 
