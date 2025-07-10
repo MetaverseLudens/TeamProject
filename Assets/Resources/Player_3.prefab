@@ -692,6 +692,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _detectGroundTrs: {fileID: 6987294894916501731}
+  _timerText: {fileID: 5398203857354514947}
 --- !u!114 &5965097029257999367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1084,6 +1085,7 @@ RectTransform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5646071363093304588}
+  - {fileID: 3496008927233663714}
   m_Father: {fileID: 1493437501763941104}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1109,7 +1111,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0

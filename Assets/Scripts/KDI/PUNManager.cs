@@ -11,12 +11,10 @@ public class PUNManager : MonoBehaviourPunCallbacks //나중에 서버 연결된
     public static PUNManager Instance;
     private readonly string gameversion = "1";
     public ServerSettings setting = null; 
-    private string userId = "shuttle";
 
     [SerializeField] Button ServerBtn;
     [SerializeField] int _roomMaxPlayers = 4;
 
-    //public TMP_InputField _userIDInput;
     public TMP_InputField _roomNameInput;
 
     private Dictionary<string, GameObject> roomDict = new Dictionary<string, GameObject>();
@@ -32,12 +30,6 @@ public class PUNManager : MonoBehaviourPunCallbacks //나중에 서버 연결된
         Connect();
     }
 
-    private void Start()
-    {
-        //userId = PlayerPrefs.GetString("USER_ID", $"USER_{Random.Range(0, 100):00}");
-        //_userIDInput.text = userId;
-        //PhotonNetwork.NickName = userId;
-    }
     private void OnApplicationQuit()
     {
         Disconnect();
@@ -82,8 +74,6 @@ public class PUNManager : MonoBehaviourPunCallbacks //나중에 서버 연결된
     {
         Debug.Log("Enter to Lobby");
         roomPrefab = Resources.Load<GameObject>("RoomBtnPrefab");
-        //_userIDInput = GameObject.Find("NicknameInputfield")?.GetComponent<InputField>();
-        //_roomNameInput = GameObject.Find("RoomNameInputfield")?.GetComponent<InputField>();
     }
 
     public override void OnJoinedRoom()
@@ -170,15 +160,6 @@ public class PUNManager : MonoBehaviourPunCallbacks //나중에 서버 연결된
 
     public void BtnRandom()
     {
-        /*
-        if (string.IsNullOrEmpty(_userIDInput.text))
-        {
-            userId = $"USER_{Random.Range(0, 100):00}";
-            _userIDInput.text = userId;
-        }
-        PlayerPrefs.SetString("USER_ID", _userIDInput.text);
-        PhotonNetwork.NickName = _userIDInput.text;
-        */
         PhotonNetwork.JoinRandomRoom();
     }
 

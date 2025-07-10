@@ -16,7 +16,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public Transform _slotParent;
     public GameObject _slotPrefab;
     public Button _actionBtn;
-    public TMP_Text _actionBtnText;
+    public Sprite[] _actionBtnSprites; //start > ready > cancel
     public Sprite[] characterSprites; // 캐릭터 ID별 스프라이트
     private Dictionary<int, PlayerSlotUI> slots = new Dictionary<int, PlayerSlotUI>();
     private HashSet<int> selectedCharacters = new HashSet<int>();
@@ -131,7 +131,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             if (CanStartGame())
+            {
+                PhotonNetwork.CurrentRoom.IsVisible = false;
                 PhotonNetwork.LoadLevel(MyString.SCENE_GAME);
+            }
         }
         else
         {
@@ -147,7 +150,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.IsMasterClient)
         {
-            _actionBtnText.text = "Start";
+            _actionBtn.GetComponent<Image>().sprite = _actionBtnSprites[0];
             _actionBtn.interactable = CanStartGame();
 
         }
@@ -155,7 +158,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             bool isReady = PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("isReady") &&
                            (bool)PhotonNetwork.LocalPlayer.CustomProperties["isReady"];
-            _actionBtnText.text = isReady ? "Cancel" : "Ready";
+            _actionBtn.GetComponent<Image>().sprite = isReady ? _actionBtnSprites[2] : _actionBtnSprites[1];
             _actionBtn.interactable = true;
         }
         countTxt.text = PhotonNetwork.CurrentRoom.PlayerCount + " / " + PhotonNetwork.CurrentRoom.MaxPlayers;

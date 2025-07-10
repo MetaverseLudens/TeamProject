@@ -1,5 +1,7 @@
 using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 using UnityEngine.XR;
@@ -9,9 +11,9 @@ public class PlayerCtrl : MonoBehaviourPun
     [SerializeField]
     private TrackedPoseDriver[] _handTrackings;
     [SerializeField]
-    private Transform _viewCamTRs;      // XROrigin¿¡ ºÎÂøµÈ ºäÄ«¸Ş¶ó HMD (Main Camera)
+    private Transform _viewCamTRs;      // XROriginì— ë¶€ì°©ëœ ë·°ì¹´ë©”ë¼ HMD (Main Camera)
     [SerializeField]
-    private Animator _anim;  //ÇÃ·¹ÀÌ¾î Ä³¸¯ÅÍÀÇ ¾Ö´Ï¸ŞÀÌÅÍ
+    private Animator _anim;  //í”Œë ˆì´ì–´ ìºë¦­í„°ì˜ ì• ë‹ˆë©”ì´í„°
     [SerializeField]
     private Rigidbody _rb;
 
@@ -19,9 +21,9 @@ public class PlayerCtrl : MonoBehaviourPun
     public InputDevice _rightHand;
 
     [SerializeField]
-    private float _moveSpeed = 5f;  //ÀÌµ¿ ¼Óµµ
+    private float _moveSpeed = 5f;  //ì´ë™ ì†ë„
     [SerializeField]
-    private float _rotSpeed = 90f; // ÃÊ´ç 90µµ È¸Àü
+    private float _rotSpeed = 90f; // ì´ˆë‹¹ 90ë„ íšŒì „
 
     [SerializeField]
     private float _jumpPower = 50f;
@@ -33,6 +35,8 @@ public class PlayerCtrl : MonoBehaviourPun
     private LayerMask _groundMask;
     [SerializeField]
     private Transform _detectGroundTrs;
+    [SerializeField]
+    TMP_Text _timerText;
 
     private void Start()
     {
@@ -45,8 +49,9 @@ public class PlayerCtrl : MonoBehaviourPun
             _viewCamTRs.gameObject.SetActive(false);
             return;
         }
-
+        if (_timerText != null) PlayManager.Instance.RegisterTimerText(_timerText);
         InitializeLeftHand();
+
     }
 
     private void Update()
@@ -66,19 +71,19 @@ public class PlayerCtrl : MonoBehaviourPun
         }
 
 
-        //±×·Î±â»óÅÂ°¡ ¾Æ´Ò¶§ ¿òÁ÷ÀÓ°¡´É
-        if(_isGroggyState == false)
+        //ê·¸ë¡œê¸°ìƒíƒœê°€ ì•„ë‹ë•Œ ì›€ì§ì„ê°€ëŠ¥
+        if (_isGroggyState == false)
         {
-            //È¸Àü
+            //íšŒì „
             if (!_leftHand.isValid || !_rightHand.isValid) { Start(); return; }
 
-            // ¿Ş¼Õ Æ®¸®°Å
+            // ì™¼ì† íŠ¸ë¦¬ê±°
             if (_leftHand.TryGetFeatureValue(CommonUsages.triggerButton, out bool leftPressed) && leftPressed)
             {
                 Rotate(-_rotSpeed * Time.deltaTime);
             }
 
-            // ¿À¸¥¼Õ Æ®¸®°Å
+            // ì˜¤ë¥¸ì† íŠ¸ë¦¬ê±°
             if (_rightHand.TryGetFeatureValue(CommonUsages.triggerButton, out bool rightPressed) && rightPressed)
             {
                 Rotate(+_rotSpeed * Time.deltaTime);
@@ -86,25 +91,25 @@ public class PlayerCtrl : MonoBehaviourPun
 
             UpdateGrounded();
 
-            // ¿ŞÂÊ ¼¶½ºÆ½ Å¬¸¯ Á¡ÇÁ
+            // ì™¼ìª½ ì„¬ìŠ¤í‹± í´ë¦­ ì í”„
             if (_leftHand.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out bool leftThumbstickClick) && leftThumbstickClick && _isGrounded)
             {
                 _rb.AddForce(Vector3.up * _jumpPower);
             }
         }
 
-        // XR µğ¹ÙÀÌ½º¿¡¼­ ÇöÀç Çìµå¼ÂÀÇ À§Ä¡/È¸Àü °¡Á®¿À±â
+        // XR ë””ë°”ì´ìŠ¤ì—ì„œ í˜„ì¬ í—¤ë“œì…‹ì˜ ìœ„ì¹˜/íšŒì „ ê°€ì ¸ì˜¤ê¸°
         Vector3 headPosition = InputTracking.GetLocalPosition(XRNode.Head);
         Quaternion headRotation = InputTracking.GetLocalRotation(XRNode.Head);
 
-        // Ä«¸Ş¶ó À§Ä¡/È¸Àü °»½Å
+        // ì¹´ë©”ë¼ ìœ„ì¹˜/íšŒì „ ê°±ì‹ 
         //_viewCamTRs.localPosition = headPosition;
         _viewCamTRs.localRotation = headRotation;
     }
 
     private void InitializeLeftHand()
     {
-        // ¿Ş¼Õ, ¿À¸¥¼Õ µğ¹ÙÀÌ½º ÃÊ±âÈ­
+        // ì™¼ì†, ì˜¤ë¥¸ì† ë””ë°”ì´ìŠ¤ ì´ˆê¸°í™”
         var leftDevices = new List<InputDevice>();
         InputDevices.GetDevicesAtXRNode(XRNode.LeftHand, leftDevices);
         if (leftDevices.Count > 0) _leftHand = leftDevices[0];
@@ -116,21 +121,21 @@ public class PlayerCtrl : MonoBehaviourPun
         if (leftDevices.Count > 0)
         {
             _leftHand = leftDevices[0];
-            Debug.Log("¿Ş¼Õ ÄÁÆ®·Ñ·¯ ¿¬°áµÊ: " + _leftHand.name);
+            Debug.Log("ì™¼ì† ì»¨íŠ¸ë¡¤ëŸ¬ ì—°ê²°ë¨: " + _leftHand.name);
         }
         else
         {
-            Debug.LogWarning("¿Ş¼Õ ÄÁÆ®·Ñ·¯¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì™¼ì† ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
 
         if (rightDevices.Count > 0)
         {
             _rightHand = rightDevices[0];
-            Debug.Log("¿À¸¥¼Õ ÄÁÆ®·Ñ·¯ ¿¬°áµÊ: " + _rightHand.name);
+            Debug.Log("ì˜¤ë¥¸ì† ì»¨íŠ¸ë¡¤ëŸ¬ ì—°ê²°ë¨: " + _rightHand.name);
         }
         else
         {
-            Debug.LogWarning("¿À¸¥¼Õ ÄÁÆ®·Ñ·¯¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+            Debug.LogWarning("ì˜¤ë¥¸ì† ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
@@ -142,11 +147,11 @@ public class PlayerCtrl : MonoBehaviourPun
 
     private void MovePlayer(Vector2 input)
     {
-        // HMD (Main Camera)ÀÇ Àü¹æ ¹æÇâ ±âÁØÀ¸·Î ÀÌµ¿ (¼öÆò¸¸ Àû¿ë)
+        // HMD (Main Camera)ì˜ ì „ë°© ë°©í–¥ ê¸°ì¤€ìœ¼ë¡œ ì´ë™ (ìˆ˜í‰ë§Œ ì ìš©)
         Vector3 forward = _viewCamTRs.forward;
         Vector3 right = _viewCamTRs.right;
 
-        // ¼öÆò ÀÌµ¿¸¸ ¹İ¿µ (Y Á¦°Å)
+        // ìˆ˜í‰ ì´ë™ë§Œ ë°˜ì˜ (Y ì œê±°)
         forward.y = 0;
         right.y = 0;
         forward.Normalize();
@@ -158,6 +163,7 @@ public class PlayerCtrl : MonoBehaviourPun
 
         _anim.SetFloat("MoveX", moveDirection.x);
         _anim.SetFloat("MoveZ", moveDirection.z);
+        //Debug.Log($"X: {moveDirection.x}\nZ: {moveDirection.z}");
     }
 
     private void Rotate(float angle)
@@ -165,4 +171,72 @@ public class PlayerCtrl : MonoBehaviourPun
         transform.Rotate(0, angle, 0);
     }
 
+
+    [PunRPC]
+    public void SpeedEffect(float speedOffset, float duration)
+    {
+        StartCoroutine(ApplySpeedRoutine(speedOffset, duration));
+    }
+
+    private IEnumerator ApplySpeedRoutine(float offset, float duration)
+    {
+        _moveSpeed += offset;
+        yield return new WaitForSeconds(duration);
+        _moveSpeed -= offset;
+    }
+
+    [PunRPC]
+    public void PowerEffect(float speedOffset, float duration)
+    {
+        StartCoroutine(ApplyPowerRoutine(speedOffset, duration));
+    }
+
+    private IEnumerator ApplyPowerRoutine(float offset, float duration)
+    {
+        //_moveSpeed += offset;
+        yield return new WaitForSeconds(duration);
+        //_moveSpeed -= offset;
+    }
+
+    [PunRPC]
+    public void ScaleEffect(float speedOffset, float duration)
+    {
+        StartCoroutine(ApplyScaleRoutine(speedOffset, duration));
+    }
+
+    private IEnumerator ApplyScaleRoutine(float offset, float duration)
+    {
+        Vector3 originalScale = transform.localScale;
+        Vector3 targetScale = originalScale + new Vector3(offset, offset, offset);
+        float elapsed = 0f;
+        float halfDuration = 2f / 2f; // ì•ì— 2f ê°’ì„ ë°”ê¾¸ë©´ ì»¤ì§€ëŠ” ì™€ì¤‘ì˜ ì‹œê°„
+
+        while (elapsed < halfDuration)
+        {
+            transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsed / halfDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = targetScale;
+        yield return new WaitForSeconds(duration - halfDuration * 2f);
+        elapsed = 0f;
+        while (elapsed < halfDuration)
+        {
+            transform.localScale = Vector3.Lerp(targetScale, originalScale, elapsed / halfDuration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.localScale = originalScale;
+    }
+    [PunRPC]
+    public void FreezePlayer()
+    {
+        if (!photonView.IsMine) return;
+
+        _rb.isKinematic = true;
+        _leftHand = new InputDevice();
+        _rightHand = new InputDevice();
+        _moveSpeed = 0f;
+        _rotSpeed = 0f;
+    }
 }
