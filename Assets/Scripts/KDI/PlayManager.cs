@@ -12,6 +12,7 @@ public class PlayManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(nameof(WaitAndSpawn));
+        Invoke(nameof(EndGame), 4f);
     }
     IEnumerator WaitAndSpawn()
     {
@@ -62,5 +63,15 @@ public class PlayManager : MonoBehaviour
         string prefabName = $"Player_{charId}";
         PhotonNetwork.Instantiate(prefabName, spawnPoints[seatIndex].position, spawnPoints[seatIndex].rotation);
     }
+    public void EndGame() //게임 끝날때 실행
+    {
+        // 결과 화면 등 보여주고
+        StartCoroutine(ReturnToLobbyAfterDelay());
+    }
 
+    IEnumerator ReturnToLobbyAfterDelay()
+    {
+        yield return new WaitForSeconds(3f);
+        PhotonNetwork.LeaveRoom(); // 자동으로 PUNManager에서 Lobby로 이동
+    }
 }

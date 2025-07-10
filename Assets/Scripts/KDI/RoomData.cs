@@ -33,8 +33,8 @@ public class RoomData : MonoBehaviour
     {
         if (_roomInfo != null)
         {
-            RoomInfoText = transform.GetChild(0).GetComponent<TMP_Text>();
-            RoomInfoText.text = $"{_roomInfo.Name} ({_roomInfo.PlayerCount}/{_roomInfo.MaxPlayers})";
+            transform.GetChild(0).GetComponent<TMP_Text>().text = $"{_roomInfo.Name}";
+            transform.GetChild(1).GetComponent<TMP_Text>().text = $"{_roomInfo.PlayerCount} / {_roomInfo.MaxPlayers}";
         }
     }
     private void OnEnterRoom(string roomName)

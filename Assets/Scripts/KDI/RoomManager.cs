@@ -131,7 +131,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.IsMasterClient)
         {
             if (CanStartGame())
+            {
+                PhotonNetwork.CurrentRoom.IsVisible = false;
                 PhotonNetwork.LoadLevel(MyString.SCENE_GAME);
+            }
         }
         else
         {
