@@ -49,7 +49,12 @@ public class PlayerCtrl : MonoBehaviourPun
             _viewCamTRs.gameObject.SetActive(false);
             return;
         }
-        if (_timerText != null) PlayManager.Instance.RegisterTimerText(_timerText);
+
+        var playManager = FindAnyObjectByType<PlayManager>();
+        if (_timerText != null && playManager != null)
+        {
+            PlayManager.Instance.RegisterTimerText(_timerText);
+        }
         InitializeLeftHand();
 
     }
