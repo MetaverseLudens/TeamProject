@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class PlayManager : MonoBehaviourPunCallbacks
@@ -24,6 +25,8 @@ public class PlayManager : MonoBehaviourPunCallbacks
     [SerializeField] Transform _rocketParent;
     [SerializeField] Animator _rocketAnim;
     [SerializeField] GameObject[] _rocketCharacters;
+    [SerializeField] Sprite[] _victorySprites;
+    [SerializeField] Image _victoryImage;
 
     void Awake()
     {
@@ -81,17 +84,11 @@ public class PlayManager : MonoBehaviourPunCallbacks
 
         gameOverUI.SetActive(true);
     }
-
-
-    public void OnClickReturnToLobby()
+    [PunRPC]
+    public void ReturnToLobbyRPC()
     {
+        Debug.Log("자동 로비 이동 중...");
         PhotonNetwork.LeaveRoom();
-    }
-
-    public void OnClickRestartRoom()
-    {
-        if (PhotonNetwork.IsMasterClient)
-            PhotonNetwork.LoadLevel(MyString.SCENE_ROOM);
     }
 
     IEnumerator WaitAndSpawn()
@@ -131,21 +128,16 @@ public class PlayManager : MonoBehaviourPunCallbacks
 
     private IEnumerator EscapeSequenceRoutine(string winnerName)
     {
-
-        // 2. 공통 시네마틱 카메라 활성화
         _rocketViewCam.gameObject.SetActive(true);
         _rocketViewCam.depth = 50;
-
-        // 3. 로켓 이펙트 연출 기다리기 (예: 3초)
         yield return new WaitForSecondsRealtime(1f);
         _rocketAnim.SetTrigger("Fly");
         yield return new WaitForSecondsRealtime(3f);
 
-        // 4. 게임 종료 UI 표시 + 우승자 이름
         gameOverUI.SetActive(true);
         TMP_Text resultText = gameOverUI.GetComponentInChildren<TMP_Text>();
         if (resultText != null)
-            resultText.text = $"{winnerName} 님이 우주 탈출에 성공했습니다!";
+            resultText.text = winnerName;
     }
     private bool winnerDeclared = false;
     [PunRPC]
@@ -181,6 +173,7 @@ public class PlayManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void DisableCharacter(int viewID, int id)
     {
+        Debug.Log($"DisableCharacter called on viewID={viewID}, charId={id}");
         PhotonView targetView = PhotonView.Find(viewID);
         if (targetView != null)
         {
@@ -188,6 +181,12 @@ public class PlayManager : MonoBehaviourPunCallbacks
             targetObj.SetActive(false);
         }
         _rocketCharacters[id].SetActive(true);
-        Debug.Log($"DisableCharacter called on viewID={viewID}, charId={id}");
+        _victoryImage.sprite = _victorySprites[id];
+        StartCoroutine(ReturnToLobbyAfterDelay(5f));
+    }
+    private IEnumerator ReturnToLobbyAfterDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        photonView.RPC("ReturnToLobbyRPC", RpcTarget.All); // 모두에게 나가라고 명령
     }
 }
