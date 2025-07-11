@@ -83,12 +83,17 @@ public class PlayManager : MonoBehaviourPunCallbacks
             _myTimerText.text = "00:00";
 
         gameOverUI.SetActive(true);
-    }
+    }   
+    private bool hasLeftRoom = false;
+
     [PunRPC]
     public void ReturnToLobbyRPC()
     {
-        Debug.Log("자동 로비 이동 중...");
-        PhotonNetwork.LeaveRoom();
+        if (!hasLeftRoom && PhotonNetwork.IsConnectedAndReady)
+        {
+            hasLeftRoom = true;
+            PhotonNetwork.LeaveRoom();
+        }
     }
 
     IEnumerator WaitAndSpawn()
@@ -182,11 +187,36 @@ public class PlayManager : MonoBehaviourPunCallbacks
         }
         _rocketCharacters[id].SetActive(true);
         _victoryImage.sprite = _victorySprites[id];
-        StartCoroutine(ReturnToLobbyAfterDelay(5f));
+
+        double leaveTime = PhotonNetwork.Time + 7.0;
+        photonView.RPC("ScheduleReturnToLobby", RpcTarget.All, leaveTime);
     }
-    private IEnumerator ReturnToLobbyAfterDelay(float delay)
+    [PunRPC]
+    public void ScheduleReturnToLobby(double leaveTime)
     {
-        yield return new WaitForSecondsRealtime(delay);
-        photonView.RPC("ReturnToLobbyRPC", RpcTarget.All); // 모두에게 나가라고 명령
+        if (PhotonNetwork.IsMasterClient)
+            StartCoroutine(MasterWaitUntilLeave(leaveTime));
+    }
+
+    private IEnumerator MasterWaitUntilLeave(double leaveTime)
+    {
+        while (PhotonNetwork.Time < leaveTime)
+            yield return null;
+
+        // 마스터가 모두에게 나가라고 지시
+        photonView.RPC("ReturnToLobbyRPC", RpcTarget.All);
+    }
+    public override void OnLeftRoom()
+    {
+        Time.timeScale = 1f;
+        Hashtable resetProps = new Hashtable
+    {
+        { "charId", null },
+        { "seatIndex", null },
+        { "isReady", false }
+    };
+        PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
+
+        PhotonNetwork.LoadLevel(MyString.SCENE_LOBBY);
     }
 }

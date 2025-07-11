@@ -170,21 +170,28 @@ public class PlayerCtrl : MonoBehaviourPun
     {
         transform.Rotate(0, angle, 0);
     }
-
+    private float _baseSpeed = 5f;
+    private float _speedOffset = 0f;
+    Coroutine _speedCo = null;
 
     [PunRPC]
-    public void SpeedEffect(float speedOffset, float duration)
+    public void SpeedEffect(float offset, float duration)
     {
-        StartCoroutine(ApplySpeedRoutine(speedOffset, duration));
+        _speedOffset += offset;
+        _moveSpeed = _baseSpeed + _speedOffset;
+
+        if (_speedCo != null) StopCoroutine(_speedCo);
+        _speedCo = StartCoroutine(RemoveSpeedAfter(offset, duration));
     }
 
-    private IEnumerator ApplySpeedRoutine(float offset, float duration)
+    private IEnumerator RemoveSpeedAfter(float offset, float duration)
     {
-        _moveSpeed += offset;
         yield return new WaitForSeconds(duration);
-        _moveSpeed -= offset;
+        _speedOffset -= offset;
+        _moveSpeed = _baseSpeed + _speedOffset;
+        _speedCo = null;
     }
-
+    Coroutine _currentPow = null;
     [PunRPC]
     public void PowerEffect(float speedOffset, float duration)
     {
@@ -197,59 +204,37 @@ public class PlayerCtrl : MonoBehaviourPun
         yield return new WaitForSeconds(duration);
         //_moveSpeed -= offset;
     }
-    private int activeBuffCount = 0;
-    private Vector3 originalScale;
-    private Coroutine currentCoroutine;
+    private Vector3 _baseScale = Vector3.one;
+    private Vector3 _scaleOffset = Vector3.zero;
+    Coroutine _scaleCo = null;
+
     [PunRPC]
-    public void ScaleEffect(float scaleOffset, float duration)
+    public void ScaleEffect(float offset, float duration)
     {
-        if (activeBuffCount == 0)
-        {
-            originalScale = transform.localScale;
-            StartCoroutine(GrowToTarget(scaleOffset)); // 커지는 애니메이션 1번만 실행
-        }
+        Vector3 delta = Vector3.one * offset;
+        _scaleOffset += delta;
+        transform.localScale = _baseScale + _scaleOffset;
 
-        activeBuffCount++;
-        StartCoroutine(BuffTimer(duration)); // 지속 시간 관리만 따로 여러 개 가능
+        if (_scaleCo != null) StopCoroutine(_scaleCo);
+        _scaleCo = StartCoroutine(RemoveScaleAfter(delta, duration));
     }
 
-    private IEnumerator GrowToTarget(float offset)
-    {
-        Vector3 targetScale = originalScale + new Vector3(offset, offset, offset);
-        float halfDuration = 0.2f;
-        float elapsed = 0f;
-
-        while (elapsed < halfDuration)
-        {
-            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, elapsed / halfDuration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        transform.localScale = targetScale;
-    }
-
-    private IEnumerator BuffTimer(float duration)
+    private IEnumerator RemoveScaleAfter(Vector3 delta, float duration)
     {
         yield return new WaitForSeconds(duration);
-        activeBuffCount--;
-
-        if (activeBuffCount == 0)
-        {
-            StartCoroutine(ShrinkBack());
-        }
+        _scaleOffset -= delta;
+        transform.localScale = _baseScale + _scaleOffset;
+        _scaleCo = null;
     }
-
-    private IEnumerator ShrinkBack()
+    [PunRPC]
+    public void FreezePlayer()
     {
-        float halfDuration = 0.2f;
-        float elapsed = 0f;
+        if (!photonView.IsMine) return;
 
-        while (elapsed < halfDuration)
-        {
-            transform.localScale = Vector3.Lerp(transform.localScale, originalScale, elapsed / halfDuration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        transform.localScale = originalScale;
+        _rb.isKinematic = true;
+        _leftHand = new InputDevice();
+        _rightHand = new InputDevice();
+        _moveSpeed = 0f;
+        _rotSpeed = 0f;
     }
 }

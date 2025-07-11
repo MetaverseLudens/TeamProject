@@ -69,10 +69,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37e5236fb65e8fd44b388544e08d8a30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  effectDuration: 15
+  effectDuration: 10
   originScale: 1.5
-  scaleBuff: 0.5
-  scaleDebuff: -0.5
+  scaleBuff: 0.25
+  scaleDebuff: -0.25
 --- !u!114 &-3396877524805330269
 MonoBehaviour:
   m_ObjectHideFlags: 0
