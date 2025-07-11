@@ -8,6 +8,9 @@ TagManager:
   - Collide
   - Rock
   - Hand
+  - Core_0
+  - Core_1
+  - Core_2
   layers:
   - Default
   - TransparentFX

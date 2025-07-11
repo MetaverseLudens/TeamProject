@@ -8,7 +8,11 @@ public class PlayerGroggy : MonoBehaviourPun
     [SerializeField]
     private PlayerCtrl _playerCtrl;
     [SerializeField]
+    private Inventory _inventory;
+    [SerializeField]
     private Rigidbody _rb;
+    [SerializeField]
+    private Collider _col;
     [SerializeField]
     private Animator _anim;
     [SerializeField]
@@ -41,13 +45,21 @@ public class PlayerGroggy : MonoBehaviourPun
             Item_Rock rock = collision.collider.GetComponent<Item_Rock>();
             float rockVelocity = rock.GetVelocity();
             float rockMass = rock.GetComponent<Rigidbody>().mass;
+            _col.enabled = false;
+            _rb.isKinematic = true;
             Debug.Log("충돌");
 
             Debug.Log("RockVelocity: " + rockVelocity);
+            
+            //Temp
+            _inventory.LoseItem();
+
             if (rockVelocity > _damageableRockVelocityValue)
             {
                 // 모든 클라이언트에 groggy 상태 전파
                 photonView.RPC(nameof(RPC_StartGroggyState), RpcTarget.All);
+
+                //_inventory.photonView.RPC(nameof(_inventory.LoseItem), RpcTarget.All);
 
                 float groggyTime = 5f; // 또는 rockVelocity * rockMass;
                 StartCoroutine(CRT_StopGroggyState(groggyTime));
@@ -77,6 +89,7 @@ public class PlayerGroggy : MonoBehaviourPun
         }
 
         _playerCtrl.enabled = false;
+        _inventory.photonView.RPC(nameof(Inventory.LoseItem), RpcTarget.All);
     }
 
     [PunRPC]
@@ -92,5 +105,7 @@ public class PlayerGroggy : MonoBehaviourPun
 
         _playerCtrl.enabled = true;
         _playerCtrl._isGroggyState = false;
+        _col.enabled = true;
+        _rb.isKinematic = false;
     }
 }
