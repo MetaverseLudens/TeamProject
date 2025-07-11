@@ -51,13 +51,12 @@ public class PlayerGroggy : MonoBehaviourPun
 
             Debug.Log("RockVelocity: " + rockVelocity);
             
-            //Temp
-            _inventory.LoseItem();
-
             if (rockVelocity > _damageableRockVelocityValue)
             {
                 // 모든 클라이언트에 groggy 상태 전파
                 photonView.RPC(nameof(RPC_StartGroggyState), RpcTarget.All);
+
+                _inventory.LoseItem();
 
                 //_inventory.photonView.RPC(nameof(_inventory.LoseItem), RpcTarget.All);
 
