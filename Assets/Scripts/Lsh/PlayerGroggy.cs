@@ -45,8 +45,8 @@ public class PlayerGroggy : MonoBehaviourPun
             Item_Rock rock = collision.collider.GetComponent<Item_Rock>();
             float rockVelocity = rock.GetVelocity();
             float rockMass = rock.GetComponent<Rigidbody>().mass;
-            _col.enabled = false;
-            _rb.isKinematic = true;
+            //_col.enabled = false;
+            //_rb.isKinematic = true;
             Debug.Log("Ãæµ¹");
 
             Debug.Log("RockVelocity: " + rockVelocity);
