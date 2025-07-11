@@ -197,46 +197,59 @@ public class PlayerCtrl : MonoBehaviourPun
         yield return new WaitForSeconds(duration);
         //_moveSpeed -= offset;
     }
-
+    private int activeBuffCount = 0;
+    private Vector3 originalScale;
+    private Coroutine currentCoroutine;
     [PunRPC]
-    public void ScaleEffect(float speedOffset, float duration)
+    public void ScaleEffect(float scaleOffset, float duration)
     {
-        StartCoroutine(ApplyScaleRoutine(speedOffset, duration));
+        if (activeBuffCount == 0)
+        {
+            originalScale = transform.localScale;
+            StartCoroutine(GrowToTarget(scaleOffset)); // 커지는 애니메이션 1번만 실행
+        }
+
+        activeBuffCount++;
+        StartCoroutine(BuffTimer(duration)); // 지속 시간 관리만 따로 여러 개 가능
     }
 
-    private IEnumerator ApplyScaleRoutine(float offset, float duration)
+    private IEnumerator GrowToTarget(float offset)
     {
-        Vector3 originalScale = transform.localScale;
         Vector3 targetScale = originalScale + new Vector3(offset, offset, offset);
+        float halfDuration = 0.2f;
         float elapsed = 0f;
-        float halfDuration = 2f / 2f; // 앞에 2f 값을 바꾸면 커지는 와중의 시간
 
         while (elapsed < halfDuration)
         {
-            transform.localScale = Vector3.Lerp(originalScale, targetScale, elapsed / halfDuration);
+            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, elapsed / halfDuration);
             elapsed += Time.deltaTime;
             yield return null;
         }
         transform.localScale = targetScale;
-        yield return new WaitForSeconds(duration - halfDuration * 2f);
-        elapsed = 0f;
+    }
+
+    private IEnumerator BuffTimer(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        activeBuffCount--;
+
+        if (activeBuffCount == 0)
+        {
+            StartCoroutine(ShrinkBack());
+        }
+    }
+
+    private IEnumerator ShrinkBack()
+    {
+        float halfDuration = 0.2f;
+        float elapsed = 0f;
+
         while (elapsed < halfDuration)
         {
-            transform.localScale = Vector3.Lerp(targetScale, originalScale, elapsed / halfDuration);
+            transform.localScale = Vector3.Lerp(transform.localScale, originalScale, elapsed / halfDuration);
             elapsed += Time.deltaTime;
             yield return null;
         }
         transform.localScale = originalScale;
-    }
-    [PunRPC]
-    public void FreezePlayer()
-    {
-        if (!photonView.IsMine) return;
-
-        _rb.isKinematic = true;
-        _leftHand = new InputDevice();
-        _rightHand = new InputDevice();
-        _moveSpeed = 0f;
-        _rotSpeed = 0f;
     }
 }
