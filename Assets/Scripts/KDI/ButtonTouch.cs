@@ -3,24 +3,18 @@ using UnityEngine;
 
 public class ButtonTouch : MonoBehaviour
 {
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log(collision.gameObject.name);
-        if (collision.gameObject.CompareTag("Hand"))
-        {
-            Debug.Log("½Â¸®");
-            GetComponent<Animator>().SetTrigger("Touch");
-        }
-    }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.gameObject.name);
-        if (other.gameObject.CompareTag("Hand"))
+        if (!other.CompareTag("Hand")) return;
+        Debug.Log("½Â¸®");
+        GetComponent<Animator>().SetTrigger("Touch");
+        string nickname = PhotonNetwork.NickName;
+        PlayManager.Instance.photonView.RPC("ReportWinnerToMaster", RpcTarget.MasterClient, nickname);
+        var props = PhotonNetwork.LocalPlayer.CustomProperties;
+        PhotonView targetView = other.transform.parent.GetComponent<PhotonView>();
+        if (targetView != null)
         {
-            Debug.Log("½Â¸®");
-            GetComponent<Animator>().SetTrigger("Touch");
-            var winner = PhotonNetwork.NickName; // ¶Ç´Â Owner.NickName
-            PlayManager.Instance.photonView.RPC("EscapeSequence", RpcTarget.All, winner);
+            PlayManager.Instance.photonView.RPC("DisableCharacter", RpcTarget.All, targetView.ViewID, (int)props["charId"]);
         }
     }
 }
