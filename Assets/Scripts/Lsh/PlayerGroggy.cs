@@ -45,8 +45,7 @@ public class PlayerGroggy : MonoBehaviourPun
             Item_Rock rock = collision.collider.GetComponent<Item_Rock>();
             float rockVelocity = rock.GetVelocity();
             float rockMass = rock.GetComponent<Rigidbody>().mass;
-            _col.enabled = false;
-            _rb.isKinematic = true;
+
             Debug.Log("충돌");
 
             Debug.Log("RockVelocity: " + rockVelocity);
@@ -59,6 +58,14 @@ public class PlayerGroggy : MonoBehaviourPun
                 // 모든 클라이언트에 groggy 상태 전파
                 photonView.RPC(nameof(RPC_StartGroggyState), RpcTarget.All);
 
+<<<<<<< Updated upstream
+=======
+                _col.enabled = false;
+                _rb.isKinematic = true;
+
+                _inventory.LoseItem();
+
+>>>>>>> Stashed changes
                 //_inventory.photonView.RPC(nameof(_inventory.LoseItem), RpcTarget.All);
 
                 float groggyTime = 5f; // 또는 rockVelocity * rockMass;
