@@ -46,31 +46,25 @@ public class PlayerGroggy : MonoBehaviourPun
             float rockVelocity = rock.GetVelocity();
             float rockMass = rock.GetComponent<Rigidbody>().mass;
 
-            Debug.Log("Ãæµ¹");
+            Debug.Log("ì¶©ëŒ");
 
             Debug.Log("RockVelocity: " + rockVelocity);
             
-            //Temp
-            _inventory.LoseItem();
-
             if (rockVelocity > _damageableRockVelocityValue)
             {
-                // ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡ groggy »óÅÂ ÀüÆÄ
+                // ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì— groggy ìƒíƒœ ì „íŒŒ
                 photonView.RPC(nameof(RPC_StartGroggyState), RpcTarget.All);
 
-<<<<<<< Updated upstream
-=======
                 _col.enabled = false;
                 _rb.isKinematic = true;
 
                 _inventory.LoseItem();
 
->>>>>>> Stashed changes
                 //_inventory.photonView.RPC(nameof(_inventory.LoseItem), RpcTarget.All);
 
-                float groggyTime = 5f; // ¶Ç´Â rockVelocity * rockMass;
+                float groggyTime = 5f; // ë˜ëŠ” rockVelocity * rockMass;
                 StartCoroutine(CRT_StopGroggyState(groggyTime));
-                Debug.Log("Velocity À¯È¿");
+                Debug.Log("Velocity ìœ íš¨");
             }
         }
     }
@@ -79,7 +73,7 @@ public class PlayerGroggy : MonoBehaviourPun
     {
         yield return new WaitForSeconds(groggyTime);
 
-        // ¸ğµç Å¬¶óÀÌ¾ğÆ®¿¡ groggy ÇØÁ¦ ÀüÆÄ
+        // ëª¨ë“  í´ë¼ì´ì–¸íŠ¸ì— groggy í•´ì œ ì „íŒŒ
         photonView.RPC(nameof(RPC_StopGroggyState), RpcTarget.All);
     }
 

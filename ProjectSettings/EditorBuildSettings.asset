@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Play.unity
     guid: 52eab0851e6b15741a4521d9b9cd0726
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/GameScene - Lsh.unity
     guid: 7c79cc2bafe60f34eb2caabbf055c2d0
   - enabled: 1

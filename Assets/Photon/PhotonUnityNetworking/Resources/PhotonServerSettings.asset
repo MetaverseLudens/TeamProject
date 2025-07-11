@@ -72,6 +72,11 @@ MonoBehaviour:
   - DropItem
   - LoseItem
   - TestDrop
+  - ReportWinnerToMaster
+  - FreezeAllPlayers
+  - DisableCharacter
+  - ReturnToLobbyRPC
+  - ScheduleReturnToLobby
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
