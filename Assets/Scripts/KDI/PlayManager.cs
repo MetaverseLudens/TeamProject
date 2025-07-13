@@ -86,16 +86,6 @@ public class PlayManager : MonoBehaviourPunCallbacks
     }   
     private bool hasLeftRoom = false;
 
-    [PunRPC]
-    public void ReturnToLobbyRPC()
-    {
-        if (!hasLeftRoom && PhotonNetwork.IsConnectedAndReady)
-        {
-            hasLeftRoom = true;
-            PhotonNetwork.LeaveRoom();
-        }
-    }
-
     IEnumerator WaitAndSpawn()
     {
         int waitFrame = 0;
@@ -194,17 +184,21 @@ public class PlayManager : MonoBehaviourPunCallbacks
     [PunRPC]
     public void ScheduleReturnToLobby(double leaveTime)
     {
-        if (PhotonNetwork.IsMasterClient)
-            StartCoroutine(MasterWaitUntilLeave(leaveTime));
+        StartCoroutine(ClientWaitUntilLeave(leaveTime));
     }
 
-    private IEnumerator MasterWaitUntilLeave(double leaveTime)
+    private IEnumerator ClientWaitUntilLeave(double leaveTime)
     {
         while (PhotonNetwork.Time < leaveTime)
             yield return null;
 
-        // 마스터가 모두에게 나가라고 지시
-        photonView.RPC("ReturnToLobbyRPC", RpcTarget.All);
+        Time.timeScale = 1f;
+
+        if (!hasLeftRoom && PhotonNetwork.IsConnectedAndReady)
+        {
+            hasLeftRoom = true;
+            PhotonNetwork.LeaveRoom();
+        }
     }
     public override void OnLeftRoom()
     {
