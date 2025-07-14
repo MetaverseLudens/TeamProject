@@ -22,8 +22,7 @@ public class PlayerGrab : MonoBehaviourPun
 
     [SerializeField]
     private float _rayLength = 3f;
-    [SerializeField]
-    private float _throwPower = 300f;
+    public float _throwPower = 300f;
 
     [SerializeField]
     private LineRenderer _lineRend;
@@ -112,7 +111,7 @@ public class PlayerGrab : MonoBehaviourPun
 
         Vector3 dir = (_curGrabbedItem.transform.position - _throwStartVec).normalized;
         float dist = Vector3.Distance(_curGrabbedItem.transform.position, _throwStartVec);
-        float lastThrowPower = dist * _throwPower;
+        float lastThrowPower = dist * _throwPower + rb.mass;
 
         // 직접 적용
         rb.AddForce(dir * lastThrowPower, ForceMode.Impulse);
