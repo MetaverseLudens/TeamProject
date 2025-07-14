@@ -98,9 +98,9 @@ public class PlayManager : MonoBehaviourPunCallbacks
     }
     IEnumerator TimeOverCo()
     {
-        double leaveTime = PhotonNetwork.Time + 7.0;
+        double leaveTime = PhotonNetwork.Time + 15.0;
         photonView.RPC("ScheduleReturnToLobby", RpcTarget.All, leaveTime);
-        yield return new WaitForSecondsRealtime(3f);
+        yield return new WaitForSecondsRealtime(5f);
         _drawCam.transform.GetChild(0).gameObject.SetActive(true);
     }
 

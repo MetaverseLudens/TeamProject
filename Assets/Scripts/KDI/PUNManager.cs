@@ -13,6 +13,7 @@ public class PUNManager : MonoBehaviourPunCallbacks //나중에 서버 연결된
     public ServerSettings setting = null; 
 
     [SerializeField] Button ServerBtn;
+    [SerializeField] Button RandomBtn;
     [SerializeField] int _roomMaxPlayers = 4;
 
     public TMP_InputField _roomNameInput;
@@ -161,6 +162,7 @@ public class PUNManager : MonoBehaviourPunCallbacks //나중에 서버 연결된
     public void BtnRandom()
     {
         PhotonNetwork.JoinRandomRoom();
+        RandomBtn.interactable = false;
     }
 
     public void BtnMakeRoom()
