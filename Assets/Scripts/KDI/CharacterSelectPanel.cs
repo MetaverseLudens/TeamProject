@@ -18,6 +18,7 @@ public class CharacterSelectPanel : MonoBehaviour
             if (btn.characterId == charId)
             {
                 btn.GetComponent<Button>().interactable = true;
+                btn.transform.GetChild(1).gameObject.SetActive(false);
                 break;
             }
         }
@@ -29,6 +30,7 @@ public class CharacterSelectPanel : MonoBehaviour
             if (btn.characterId == charId)
             {
                 btn.GetComponent<Button>().interactable = false;
+                btn.transform.GetChild(1).gameObject.SetActive(true);
                 break;
             }
         }

@@ -6,7 +6,13 @@ public class ButtonTouch : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Hand")) return;
-        Debug.Log("승리");
+        //핵심아이템 3개 다 먹었는지 확인
+        Inventory inv = other.transform.parent.GetComponent<Inventory>();
+        for(int i = 0; i < inv._haveCoreItemBools.Length; i++)
+        {
+            if (!inv._haveCoreItemBools[i]) return;
+        }
+
         GetComponent<Animator>().SetTrigger("Touch");
         string nickname = PhotonNetwork.NickName;
         PlayManager.Instance.photonView.RPC("ReportWinnerToMaster", RpcTarget.MasterClient, nickname);
