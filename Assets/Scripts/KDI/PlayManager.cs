@@ -28,9 +28,15 @@ public class PlayManager : MonoBehaviourPunCallbacks
     [SerializeField] Sprite[] _victorySprites;
     [SerializeField] Image _victoryImage;
 
+    [SerializeField]
+    private AudioClip _rocketClip;
+    [SerializeField]
+    private AudioClip _victoryClip;
+
     void Awake()
     {
         Instance = this;
+        SoundManager.Instance.StopLobbyAndRoomBGM();
     }
 
     void Start()
@@ -127,7 +133,9 @@ public class PlayManager : MonoBehaviourPunCallbacks
         _rocketViewCam.depth = 50;
         yield return new WaitForSecondsRealtime(1f);
         _rocketAnim.SetTrigger("Fly");
+        SoundManager.Instance.PlaySfx(_rocketClip);
         yield return new WaitForSecondsRealtime(3f);
+        SoundManager.Instance.PlaySfx(_victoryClip);
 
         gameOverUI.SetActive(true);
         TMP_Text resultText = gameOverUI.GetComponentInChildren<TMP_Text>();

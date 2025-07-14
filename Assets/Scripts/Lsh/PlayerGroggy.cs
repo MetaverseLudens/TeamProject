@@ -19,6 +19,10 @@ public class PlayerGroggy : MonoBehaviourPun
     private TrackedPoseDriver[] _trackPoseDrivers;
     [SerializeField]
     private ParticleSystem _groggyPtc;
+    [SerializeField]
+    private AudioSource _playerAudioSrc;
+    [SerializeField]
+    private AudioClip _takeDamageClip;
 
     [SerializeField]
     private float _damageableRockVelocityValue;
@@ -60,12 +64,23 @@ public class PlayerGroggy : MonoBehaviourPun
 
                 _inventory.LoseItem();
 
-                //_inventory.photonView.RPC(nameof(_inventory.LoseItem), RpcTarget.All);
+                _playerAudioSrc.PlayOneShot(_takeDamageClip);
+
+                photonView.RPC(nameof(PlayDamageSound_RPC), RpcTarget.Others, transform.position);
 
                 float groggyTime = 5f; // 또는 rockVelocity * rockMass;
                 StartCoroutine(CRT_StopGroggyState(groggyTime));
                 Debug.Log("Velocity 유효");
             }
+        }
+    }
+
+    [PunRPC]
+    public void PlayDamageSound_RPC(Vector3 pos)
+    {
+        if (_takeDamageClip != null)
+        {
+            AudioSource.PlayClipAtPoint(_takeDamageClip, pos);
         }
     }
 

@@ -15,6 +15,11 @@ public class CoreItem : MonoBehaviourPun
     [SerializeField]
     private float _dropMoveSpeed;
 
+    [SerializeField]
+    private AudioSource _audioSrc;
+    [SerializeField]
+    private AudioClip _getItemClip;
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -36,7 +41,21 @@ public class CoreItem : MonoBehaviourPun
         // viewID를 넘겨서 다른 클라이언트에서도 해당 Player를 찾도록
         photonView.RPC(nameof(SetCoreSlot), RpcTarget.All, targetView.ViewID);
         photonView.RPC(nameof(Off), RpcTarget.All);
+
+        _audioSrc.PlayOneShot(_getItemClip);
+
+        photonView.RPC(nameof(PlayGetItemSound_RPC), RpcTarget.Others, transform.position);
     }
+
+    [PunRPC]
+    public void PlayGetItemSound_RPC(Vector3 pos)
+    {
+        if (_getItemClip != null)
+        {
+            AudioSource.PlayClipAtPoint(_getItemClip, pos);
+        }
+    }
+
 
     [PunRPC]
     private void Off() { _modelObj.SetActive(false); }
