@@ -55,6 +55,7 @@ public class LobbyUI : MonoBehaviour
     }
     void ShowRoom()
     {
+        _confirmBtn.interactable = true;
         _photonUI.SetActive(false);
         _roomListUI.SetActive(true);
     }
