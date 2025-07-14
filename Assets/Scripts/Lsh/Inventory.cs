@@ -28,7 +28,7 @@ public class Inventory : MonoBehaviourPun, IPunObservable
     private Sprite[] _activatedImgs;
 
     [SerializeField]
-    private bool[] _haveCoreItemBools;
+    public bool[] _haveCoreItemBools;
 
 
     private float _coreItemSlotsPanelCtrDelayTime = 0f;

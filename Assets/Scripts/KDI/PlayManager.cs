@@ -1,12 +1,7 @@
-using ExitGames.Client.Photon;
 using Photon.Pun;
-using Photon.Realtime;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -15,8 +10,7 @@ public class PlayManager : MonoBehaviourPunCallbacks
     public static PlayManager Instance;
     public Transform[] spawnPoints;
     public float gameDuration = 180f;
-    public GameObject gameOverUI;
-    public GameObject explosionEffect;
+    public GameObject winnerUI;
 
     private TMP_Text _myTimerText;
     private float startTime;
@@ -24,9 +18,12 @@ public class PlayManager : MonoBehaviourPunCallbacks
     public Camera _rocketViewCam;
     [SerializeField] Transform _rocketParent;
     [SerializeField] Animator _rocketAnim;
+    [SerializeField] GameObject[] _rocketModels;
     [SerializeField] GameObject[] _rocketCharacters;
     [SerializeField] Sprite[] _victorySprites;
     [SerializeField] Image _victoryImage;
+    [SerializeField] GameObject _meteors;
+    [SerializeField] GameObject _drawCam;
 
     [SerializeField]
     private AudioClip _rocketClip;
@@ -87,11 +84,27 @@ public class PlayManager : MonoBehaviourPunCallbacks
 
         if (_myTimerText != null)
             _myTimerText.text = "00:00";
+        //무승부 처리
+        TimeOver();
+    }
+    private void TimeOver()
+    {
+        Debug.Log("게임 시간이 종료되었습니다.");
+        photonView.RPC("FreezeAllPlayers", RpcTarget.All);
+        _drawCam.SetActive(true);
+        _drawCam.GetComponent<Camera>().depth = 50;
+        _meteors.SetActive(true);
+        StartCoroutine(TimeOverCo());
+    }
+    IEnumerator TimeOverCo()
+    {
+        double leaveTime = PhotonNetwork.Time + 7.0;
+        photonView.RPC("ScheduleReturnToLobby", RpcTarget.All, leaveTime);
+        yield return new WaitForSecondsRealtime(3f);
+        _drawCam.transform.GetChild(0).gameObject.SetActive(true);
+    }
 
-        gameOverUI.SetActive(true);
-    }   
     private bool hasLeftRoom = false;
-
     IEnumerator WaitAndSpawn()
     {
         int waitFrame = 0;
@@ -129,6 +142,8 @@ public class PlayManager : MonoBehaviourPunCallbacks
 
     private IEnumerator EscapeSequenceRoutine(string winnerName)
     {
+        _rocketModels[0].SetActive(false); //망가진 로켓 끄기
+        _rocketModels[1].SetActive(true); //고친 로켓 켜기
         _rocketViewCam.gameObject.SetActive(true);
         _rocketViewCam.depth = 50;
         yield return new WaitForSecondsRealtime(1f);
@@ -137,8 +152,8 @@ public class PlayManager : MonoBehaviourPunCallbacks
         yield return new WaitForSecondsRealtime(3f);
         SoundManager.Instance.PlaySfx(_victoryClip);
 
-        gameOverUI.SetActive(true);
-        TMP_Text resultText = gameOverUI.GetComponentInChildren<TMP_Text>();
+        winnerUI.SetActive(true);
+        TMP_Text resultText = winnerUI.GetComponentInChildren<TMP_Text>();
         if (resultText != null)
             resultText.text = winnerName;
     }
