@@ -31,7 +31,7 @@ public class Inventory : MonoBehaviourPun, IPunObservable
     private GameObject _alienObj;
 
     [SerializeField]
-    private bool[] _haveCoreItemBools;
+    public bool[] _haveCoreItemBools;
 
 
     private float _coreItemSlotsPanelCtrDelayTime = 0f;
