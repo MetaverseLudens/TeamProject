@@ -28,7 +28,10 @@ public class Inventory : MonoBehaviourPun, IPunObservable
     private Sprite[] _activatedImgs;
 
     [SerializeField]
-    public bool[] _haveCoreItemBools;
+    private GameObject _alienObj;
+
+    [SerializeField]
+    private bool[] _haveCoreItemBools;
 
 
     private float _coreItemSlotsPanelCtrDelayTime = 0f;
@@ -41,13 +44,13 @@ public class Inventory : MonoBehaviourPun, IPunObservable
         _coreItemObjs[1] = GameObject.FindGameObjectWithTag(MyString.CORE_1_TAG).GetComponent<CoreItem>();
         _coreItemObjs[2] = GameObject.FindGameObjectWithTag(MyString.CORE_2_TAG).GetComponent<CoreItem>();
 
+        StartCoroutine(nameof(CRT_AlienActivation));
+
         if (photonView.IsMine == false)
         {
             _canvasObj.SetActive(false);
             return;
         }
-
-        //StartCoroutine(nameof(CRT_CheckGatherAllCoreItems));
     }
 
 
@@ -59,6 +62,16 @@ public class Inventory : MonoBehaviourPun, IPunObservable
         OnOffCoreSlots();
     }
 
+
+    private IEnumerator CRT_AlienActivation()
+    {
+        WaitForSeconds waitTime = new WaitForSeconds(0.1f);
+        while (true)
+        {
+            _alienObj.SetActive(_haveCoreItemBools[2]);
+            yield return waitTime;
+        }
+    }
 
 
     //코어 아이템 슬롯UI 활성화 컨트롤러
