@@ -68,7 +68,7 @@ public class PlayerGroggy : MonoBehaviourPun
 
                 photonView.RPC(nameof(PlayDamageSound_RPC), RpcTarget.Others, transform.position);
 
-                float groggyTime = rockMass + rockVelocity;
+                float groggyTime = rockMass;
                 StartCoroutine(CRT_StopGroggyState(groggyTime));
                 Debug.Log("Velocity 유효");
             }
