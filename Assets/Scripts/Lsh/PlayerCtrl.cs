@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -40,6 +41,9 @@ public class PlayerCtrl : MonoBehaviourPun
     [SerializeField]
     private PlayerGrab _playerGrab;
 
+    [SerializeField]
+    public TMP_Text _nicknameTxt;
+
     //Sound
     [SerializeField]
     private AudioSource _playerAudioSrc;
@@ -47,6 +51,10 @@ public class PlayerCtrl : MonoBehaviourPun
     private AudioClip _footStepClip;
     private float _stepInterval = 0.2f;
     private float _stepTime;
+    [SerializeField] AudioClip _powerClip;
+    [SerializeField] AudioClip _speedClip;
+    [SerializeField] AudioClip _scaleUpClip;
+    [SerializeField] AudioClip _scaleDownClip;
 
 
     private void Start()
@@ -67,7 +75,12 @@ public class PlayerCtrl : MonoBehaviourPun
             PlayManager.Instance.RegisterTimerText(_timerText);
         }
         InitializeLeftHand();
-
+        GetComponent<PhotonView>().RPC("SetNickname", RpcTarget.AllBuffered, GetComponent<PhotonView>().Owner.NickName);
+    }
+    [PunRPC]
+    public void SetNickname(string nick)
+    {
+        _nicknameTxt.text = nick;
     }
 
     private void Update()
@@ -204,7 +217,6 @@ public class PlayerCtrl : MonoBehaviourPun
             AudioSource.PlayClipAtPoint(_footStepClip, pos);
         }
     }
-
     private void Rotate(float angle)
     {
         transform.Rotate(0, angle, 0);
@@ -241,6 +253,7 @@ public class PlayerCtrl : MonoBehaviourPun
 
     private IEnumerator RemoveSpeedAfter(float offset, float duration)
     {
+        _playerAudioSrc.PlayOneShot(_speedClip);
         yield return new WaitForSeconds(duration);
         _speedOffset -= offset;
         _moveSpeed = _baseSpeed + _speedOffset;
@@ -251,8 +264,6 @@ public class PlayerCtrl : MonoBehaviourPun
 
     #region Power
 
-    Coroutine _currentPow = null;
-
     [PunRPC]
     public void PowerEffect(float speedOffset, float duration)
     {
@@ -261,6 +272,7 @@ public class PlayerCtrl : MonoBehaviourPun
 
     private IEnumerator ApplyPowerRoutine(float offset, float duration)
     {
+        _playerAudioSrc.PlayOneShot(_powerClip);
         _playerGrab._throwPower += offset;
         yield return new WaitForSeconds(duration);
         _playerGrab._throwPower -= offset;
@@ -278,7 +290,8 @@ public class PlayerCtrl : MonoBehaviourPun
         Vector3 delta = Vector3.one * offset;
         _scaleOffset += delta;
         transform.localScale = _baseScale + _scaleOffset;
-
+        if (offset > 0) _playerAudioSrc.PlayOneShot(_scaleUpClip);
+        else _playerAudioSrc.PlayOneShot(_scaleDownClip);
         if (_scaleCo != null) StopCoroutine(_scaleCo);
         _scaleCo = StartCoroutine(RemoveScaleAfter(delta, duration));
     }

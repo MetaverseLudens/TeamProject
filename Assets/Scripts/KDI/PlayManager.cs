@@ -29,6 +29,8 @@ public class PlayManager : MonoBehaviourPunCallbacks
     private AudioClip _rocketClip;
     [SerializeField]
     private AudioClip _victoryClip;
+    [SerializeField]
+    private AudioClip _drawClip;
 
     void Awake()
     {
@@ -101,6 +103,7 @@ public class PlayManager : MonoBehaviourPunCallbacks
         double leaveTime = PhotonNetwork.Time + 12.0;
         photonView.RPC("ScheduleReturnToLobby", RpcTarget.All, leaveTime);
         yield return new WaitForSecondsRealtime(5f);
+        SoundManager.Instance.PlaySfx(_drawClip);
         _drawCam.transform.GetChild(0).gameObject.SetActive(true);
     }
 
@@ -133,7 +136,6 @@ public class PlayManager : MonoBehaviourPunCallbacks
         string prefabName = $"Player_{charId}";
         PhotonNetwork.Instantiate(prefabName, spawnPoints[seatIndex].position, spawnPoints[seatIndex].rotation);
     }
-
     [PunRPC]
     public void EscapeSequence(string winnerName)
     {
@@ -142,13 +144,13 @@ public class PlayManager : MonoBehaviourPunCallbacks
 
     private IEnumerator EscapeSequenceRoutine(string winnerName)
     {
+        SoundManager.Instance.PlaySfx(_rocketClip);
         _rocketModels[0].SetActive(false); //망가진 로켓 끄기
         _rocketModels[1].SetActive(true); //고친 로켓 켜기
         _rocketViewCam.gameObject.SetActive(true);
         _rocketViewCam.depth = 50;
         yield return new WaitForSecondsRealtime(1f);
         _rocketAnim.SetTrigger("Fly");
-        SoundManager.Instance.PlaySfx(_rocketClip);
         yield return new WaitForSecondsRealtime(3f);
         SoundManager.Instance.PlaySfx(_victoryClip);
 
