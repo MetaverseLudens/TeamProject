@@ -35,7 +35,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        for(int i = 0; i < characterModelRoot.childCount; i++)
+        for (int i = 0; i < characterModelRoot.childCount; i++)
         {
             allCharacterModels[i] = characterModelRoot.GetChild(i).gameObject;
             characterModelRoot.GetChild(i).gameObject.SetActive(false);
@@ -309,7 +309,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 true // 이제는 방장
             );
         }
-    }   
+    }
     public override void OnLeftRoom()
     {
         Debug.Log("Left Room → 내 custom props 초기화");
