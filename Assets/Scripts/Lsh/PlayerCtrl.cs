@@ -24,7 +24,6 @@ public class PlayerCtrl : MonoBehaviourPun
     private float _moveSpeed = 5f;  //이동 속도
     [SerializeField]
     private float _rotSpeed = 90f; // 초당 90도 회전
-
     [SerializeField]
     private float _jumpPower = 50f;
     [SerializeField]
@@ -37,6 +36,9 @@ public class PlayerCtrl : MonoBehaviourPun
     private Transform _detectGroundTrs;
     [SerializeField]
     TMP_Text _timerText;
+
+    [SerializeField]
+    private PlayerGrab _playerGrab;
 
     //Sound
     [SerializeField]
@@ -207,6 +209,22 @@ public class PlayerCtrl : MonoBehaviourPun
     {
         transform.Rotate(0, angle, 0);
     }
+
+
+    [PunRPC]
+    public void FreezePlayer()
+    {
+        if (!photonView.IsMine) return;
+
+        _rb.isKinematic = true;
+        _leftHand = new InputDevice();
+        _rightHand = new InputDevice();
+        _moveSpeed = 0f;
+        _rotSpeed = 0f;
+    }
+
+    #region Speed
+
     private float _baseSpeed = 5f;
     private float _speedOffset = 0f;
     Coroutine _speedCo = null;
@@ -228,7 +246,13 @@ public class PlayerCtrl : MonoBehaviourPun
         _moveSpeed = _baseSpeed + _speedOffset;
         _speedCo = null;
     }
+
+    #endregion
+
+    #region Power
+
     Coroutine _currentPow = null;
+
     [PunRPC]
     public void PowerEffect(float speedOffset, float duration)
     {
@@ -237,14 +261,17 @@ public class PlayerCtrl : MonoBehaviourPun
 
     private IEnumerator ApplyPowerRoutine(float offset, float duration)
     {
-        //_moveSpeed += offset;
+        _playerGrab._throwPower += offset;
         yield return new WaitForSeconds(duration);
-        //_moveSpeed -= offset;
+        _playerGrab._throwPower -= offset;
     }
     private Vector3 _baseScale = Vector3.one;
     private Vector3 _scaleOffset = Vector3.zero;
     Coroutine _scaleCo = null;
 
+    #endregion
+
+    #region Scale
     [PunRPC]
     public void ScaleEffect(float offset, float duration)
     {
@@ -263,15 +290,6 @@ public class PlayerCtrl : MonoBehaviourPun
         transform.localScale = _baseScale + _scaleOffset;
         _scaleCo = null;
     }
-    [PunRPC]
-    public void FreezePlayer()
-    {
-        if (!photonView.IsMine) return;
 
-        _rb.isKinematic = true;
-        _leftHand = new InputDevice();
-        _rightHand = new InputDevice();
-        _moveSpeed = 0f;
-        _rotSpeed = 0f;
-    }
+    #endregion
 }
