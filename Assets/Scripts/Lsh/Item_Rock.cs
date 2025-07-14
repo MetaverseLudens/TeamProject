@@ -15,7 +15,7 @@ public class Item_Rock : MonoBehaviourPun, IGrabable
         _col = GetComponent<Collider>();
         _rb = GetComponent<Rigidbody>();
 
-        float ran = Random.Range(2.0f, 5.0f);
+        float ran = Random.Range(2.0f, 4.0f);
         _rb.mass = ran;
         transform.localScale = new Vector3(ran, ran, ran);
     }

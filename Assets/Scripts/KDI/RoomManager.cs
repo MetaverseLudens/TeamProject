@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using System.Collections;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
-using UnityEngine.Rendering;
 using TMPro;
 
 public class RoomManager : MonoBehaviourPunCallbacks
@@ -35,7 +34,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        for(int i = 0; i < characterModelRoot.childCount; i++)
+        for (int i = 0; i < characterModelRoot.childCount; i++)
         {
             allCharacterModels[i] = characterModelRoot.GetChild(i).gameObject;
             characterModelRoot.GetChild(i).gameObject.SetActive(false);
@@ -46,6 +45,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         roomTxt.text = PhotonNetwork.CurrentRoom.Name;
         countTxt.text = PhotonNetwork.CurrentRoom.PlayerCount + " / " + PhotonNetwork.CurrentRoom.MaxPlayers;
     }
+
     void ShowMyCharacterModel()
     {
         if (!PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("charId", out object val))
@@ -67,18 +67,60 @@ public class RoomManager : MonoBehaviourPunCallbacks
             }
         }
     }
+
+    // 캐릭터 선택 처리
+    public void RequestCharacterSelection(int charId)
+    {
+        Debug.Log("RequestCharacterSelection " + charId);
+
+        // 서버에서 캐릭터 선택을 처리하도록 요청
+        photonView.RPC("RPC_RequestCharacterSelection", RpcTarget.MasterClient, charId);
+    }
+
+    // 서버에서 캐릭터 선택 처리 (Master Client에서만 실행)
+    [PunRPC]
+    void RPC_RequestCharacterSelection(int charId)
+    {
+        if (selectedCharacters.Contains(charId))
+        {
+            // 캐릭터가 이미 선택되었으므로 선택을 거부
+            return;
+        }
+
+        selectedCharacters.Add(charId);
+
+        // 선택된 캐릭터를 모든 클라이언트에 동기화
+        photonView.RPC("RPC_UpdateCharacterSelection", RpcTarget.All, charId);
+    }
+
+    // 캐릭터 선택이 완료되었음을 모든 클라이언트에 알리는 RPC 메서드
+    [PunRPC]
+    void RPC_UpdateCharacterSelection(int charId)
+    {
+        // 선택된 캐릭터를 로컬 클라이언트에서 반영
+        // 예: UI 업데이트 또는 캐릭터 모델 표시
+        if (!PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("charId"))
+        {
+            PhotonNetwork.LocalPlayer.SetCustomProperties(new Hashtable { { "charId", charId } });
+        }
+
+        // 캐릭터 모델 보여주기
+        ShowMyCharacterModel();
+    }
+
     public override void OnJoinedRoom()
     {
         Debug.Log("OnJoinedRoom");
 
         ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
-    {
-        { "charId", null },
-        { "seatIndex", null },
-        { "isReady", false }
-    };
+        {
+            { "charId", null },
+            { "seatIndex", null },
+            { "isReady", false }
+        };
         UpdateActionButton();
     }
+
     IEnumerator WaitForJoinAndInit()
     {
         yield return new WaitUntil(() => PhotonNetwork.InRoom && PhotonNetwork.LocalPlayer != null);
@@ -152,7 +194,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             _actionBtn.GetComponent<Image>().sprite = _actionBtnSprites[0];
             _actionBtn.interactable = CanStartGame();
-
         }
         else
         {
@@ -180,31 +221,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         return true;
     }
 
-    public void RequestCharacterSelection(int charId)
-    {
-        Debug.Log("RequestCharacterSelection " + charId);
-        if (selectedCharacters.Contains(charId)) return;
-
-        // 현재 선택한 캐릭터가 있다면 리스트에서 제거
-        int? prevCharId = null;
-        if (PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("charId", out object prev))
-        {
-            prevCharId = (int)prev;
-        }
-
-        ExitGames.Client.Photon.Hashtable props = new ExitGames.Client.Photon.Hashtable { { "charId", charId } };
-
-        if (prevCharId.HasValue)
-            props["oldCharId"] = prevCharId.Value; // 이전 캐릭터도 함께 전송
-
-        PhotonNetwork.LocalPlayer.SetCustomProperties(props);
-    }
-
     void AutoAssignCharacter(Player player)
     {
         if (!PhotonNetwork.InRoom || player == null || !player.IsLocal)
             return;
-        Debug.Log(player.CustomProperties);
+
         if (player.CustomProperties.ContainsKey("charId")) return;
 
         for (int i = 0; i < characterSprites.Length; i++)
@@ -212,7 +233,6 @@ public class RoomManager : MonoBehaviourPunCallbacks
             if (!selectedCharacters.Contains(i))
             {
                 PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable { { "charId", i } });
-                Debug.Log($"{player} Auto Assign Character");
                 return;
             }
         }
@@ -225,19 +245,17 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        Debug.Log("OnPlayerEnteredRoom" + newPlayer.NickName);
         CreateSlot(newPlayer);
         AutoAssignCharacter(newPlayer);
         AutoAssignSeat(newPlayer);
         UpdateActionButton();
     }
+
     void AutoAssignSeat(Player player)
     {
-        Debug.Log("AutoAssignSeat " + player.CustomProperties);
         if (player.CustomProperties.ContainsKey("seatIndex")) return;
 
-        int seatIndex = PhotonNetwork.PlayerList.Length - 1; // 단순히 입장 순서대로
-        Debug.Log("AutoAssignSeat for " + player.NickName + " → " + seatIndex);
+        int seatIndex = PhotonNetwork.PlayerList.Length - 1;
         player.SetCustomProperties(new Hashtable { { "seatIndex", seatIndex } });
     }
 
@@ -261,7 +279,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         UpdateActionButton();
         ReassignSeatIndices();
     }
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps) //플레이어의 custom properties 값들이 바뀌면 실행
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
     {
         int actorNum = targetPlayer.ActorNumber;
 
@@ -293,10 +312,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         }
     }
 
-    public override void OnMasterClientSwitched(Player newMasterClient) //방장 나가서 새로 방장 설정
+    public override void OnMasterClientSwitched(Player newMasterClient)
     {
-        Debug.Log("방장이 바뀜 → " + newMasterClient.NickName);
-
         Hashtable props = new Hashtable { { "seatIndex", 0 } };
         newMasterClient.SetCustomProperties(props);
 
@@ -306,28 +323,24 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             slot.SetReady(
                 newMasterClient.CustomProperties.ContainsKey("isReady") && (bool)newMasterClient.CustomProperties["isReady"],
-                true // 이제는 방장
+                true
             );
         }
-    }   
+    }
+
     public override void OnLeftRoom()
     {
-        Debug.Log("Left Room → 내 custom props 초기화");
-
-        // 내가 기존 방에서 쓰던 값 초기화
         ExitGames.Client.Photon.Hashtable resetProps = new ExitGames.Client.Photon.Hashtable
-    {
-        { "charId", null },
-        { "seatIndex", null },
-        { "isReady", false }
-    };
+        {
+            { "charId", null },
+            { "seatIndex", null },
+            { "isReady", false }
+        };
         PhotonNetwork.LocalPlayer.SetCustomProperties(resetProps);
     }
+
     void ReassignSeatIndices()
     {
-        Debug.Log("Reassigning seat indices...");
-
-        // 모든 플레이어를 seatIndex 순으로 재배열
         int i = 0;
         foreach (var player in PhotonNetwork.PlayerList)
         {

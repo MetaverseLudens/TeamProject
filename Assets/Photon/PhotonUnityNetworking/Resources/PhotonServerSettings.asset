@@ -80,6 +80,8 @@ MonoBehaviour:
   - PlayFootStepSound_RPC
   - PlayGetItemSound_RPC
   - PlayDamageSound_RPC
+  - RPC_RequestCharacterSelection
+  - RPC_UpdateCharacterSelection
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0
