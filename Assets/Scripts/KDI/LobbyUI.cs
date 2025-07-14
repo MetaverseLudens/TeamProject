@@ -1,5 +1,4 @@
 using Photon.Pun;
-using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +13,13 @@ public class LobbyUI : MonoBehaviour
 
     [SerializeField] TMP_InputField _nicknameInput;
     [SerializeField] Button _confirmBtn;
+
+    private void Awake()
+    {
+        if (SoundManager.Instance.BgmIsPlaying == false)
+            SoundManager.Instance.PlayLobbyAndRoomBGM();
+    }
+
     private void Start()
     {
         if (SceneFlowTracker.ReturnedFromRoom)

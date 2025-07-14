@@ -77,6 +77,9 @@ MonoBehaviour:
   - DisableCharacter
   - ReturnToLobbyRPC
   - ScheduleReturnToLobby
+  - PlayFootStepSound_RPC
+  - PlayGetItemSound_RPC
+  - PlayDamageSound_RPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -38,6 +38,15 @@ public class PlayerCtrl : MonoBehaviourPun
     [SerializeField]
     TMP_Text _timerText;
 
+    //Sound
+    [SerializeField]
+    private AudioSource _playerAudioSrc;
+    [SerializeField]
+    private AudioClip _footStepClip;
+    private float _stepInterval = 0.2f;
+    private float _stepTime;
+
+
     private void Start()
     {
         if (photonView.IsMine == false)
@@ -169,6 +178,29 @@ public class PlayerCtrl : MonoBehaviourPun
         _anim.SetFloat("MoveX", moveDirection.x);
         _anim.SetFloat("MoveZ", moveDirection.z);
         //Debug.Log($"X: {moveDirection.x}\nZ: {moveDirection.z}");
+
+        if (_isGrounded)
+        {
+            _stepTime -= Time.deltaTime;
+            if (_stepTime <= 0 && moveDirection.magnitude != 0)
+            {
+                _playerAudioSrc.PlayOneShot(_footStepClip);
+
+                photonView.RPC(nameof(PlayFootStepSound_RPC), RpcTarget.Others, transform.position);
+
+                _stepTime = _stepInterval;
+            }
+        }
+
+    }
+
+    [PunRPC]
+    public void PlayFootStepSound_RPC(Vector3 pos)
+    {
+        if (_footStepClip != null)
+        {
+            AudioSource.PlayClipAtPoint(_footStepClip, pos);
+        }
     }
 
     private void Rotate(float angle)
