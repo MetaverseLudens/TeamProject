@@ -195,15 +195,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4674918030614456, guid: 61400dcd69108c64b970eb523f3d1783, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.64244
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4674918030614456, guid: 61400dcd69108c64b970eb523f3d1783, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.72069
+      value: 0.962
       objectReference: {fileID: 0}
     - target: {fileID: 4674918030614456, guid: 61400dcd69108c64b970eb523f3d1783, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.20068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4674918030614456, guid: 61400dcd69108c64b970eb523f3d1783, type: 3}
       propertyPath: m_LocalRotation.w
@@ -232,6 +232,10 @@ PrefabInstance:
     - target: {fileID: 4674918030614456, guid: 61400dcd69108c64b970eb523f3d1783, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198199498142640322, guid: 61400dcd69108c64b970eb523f3d1783, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 198199498142640322, guid: 61400dcd69108c64b970eb523f3d1783, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
