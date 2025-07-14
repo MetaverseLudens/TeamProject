@@ -551,7 +551,7 @@ MonoBehaviour:
   - {fileID: 2006473421}
   - {fileID: 1033818663}
   - {fileID: 356286449}
-  gameDuration: 180
+  gameDuration: 10
   winnerUI: {fileID: 778370687}
   _rocketViewCam: {fileID: 553772294}
   _rocketParent: {fileID: 1262199185}
@@ -6252,7 +6252,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 70addf64758586748850ae2c16dae8cf, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1cc72de388fe51041ae4de1fd97c9596, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -8963,7 +8963,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5855ad8b18ed9544a953be1181206cc6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2ed763190b013d04c95053efc38e1aef, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -9061,7 +9061,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 636ecfb90c2b0674d80b81dee3393696, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 618102e01db806448bb457c004c26984, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
