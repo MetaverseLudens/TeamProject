@@ -11,6 +11,8 @@ public class ConsumePower : ConsumeItemBase
 
     public override void OnConsumed(GameObject player)
     {
+        _audioSrc.Play();
+
         if (!photonView.IsMine) return;
 
         var controller = player.GetComponent<PlayerCtrl>();
