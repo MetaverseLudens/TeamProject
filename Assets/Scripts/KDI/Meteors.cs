@@ -16,7 +16,7 @@ public class Meteors : MonoBehaviour
         while (true)
         {
             transform.GetChild(currentChild).GetChild(0).GetComponent<Animator>().SetTrigger("Fall");
-            term = Random.Range(0.5f, 3);
+            term = Random.Range(0.5f, 2);
             yield return new WaitForSecondsRealtime(term);
             currentChild = (currentChild + 1) % childCount;
         }
