@@ -18,7 +18,7 @@ public class PhotonObjectPool : MonoBehaviour, IPunPrefabPool
 
     private void Awake()
     {
-        PhotonNetwork.PrefabPool = this; // Photon이 이 풀을 쓰게 만듦
+        PhotonNetwork.PrefabPool = this;
 
         foreach (var pool in poolList)
         {
@@ -49,8 +49,6 @@ public class PhotonObjectPool : MonoBehaviour, IPunPrefabPool
         }
 
         go.transform.SetPositionAndRotation(position, rotation);
-
-        // Photon이 나중에 SetActive(true) 호출하므로 여기선 비활성 상태로 반환해야 함
         return go;
     }
 
